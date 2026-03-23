@@ -567,7 +567,6 @@ body.dark-mode .lvl-pill.lvl3{background:rgba(220,38,38,.15);}
 <input type="file" id="photo-input" accept="image/*" onchange="handlePhotoUpload(event)">
 
 <div id="page-home" class="page active">
-  <div id="welcome-area"></div>
   <div class="profile header-bg" id="home-profile"></div>
   <div class="view-bar">
     <div class="vtab active" id="vtab-grid" onclick="setView('grid',this)">
@@ -1019,9 +1018,11 @@ function renderProfile(){
   const clr=pct===100?'var(--green)':'var(--accent)';
   document.getElementById('home-profile').innerHTML=`
     <div class="profile-row">
-      <div class="profile-avatar">
+      <div class="profile-avatar" onclick="triggerPhotoUpload()" style="cursor:pointer" title="Changer la photo">
         ${ring(pct,34,3,clr,80)}
-        <div class="profile-avatar-inner">${currentUser?currentUser.email[0].toUpperCase():"R"}</div>
+        <div class="profile-avatar-inner" style="overflow:hidden;">
+          ${getUserPhoto() ? `<img src="${getUserPhoto()}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">` : (currentUser?currentUser.email[0].toUpperCase():"R")}
+        </div>
       </div>
       <div class="profile-stats">
         <div class="pstat"><span class="pstat-v">${done}</span><span class="pstat-l">faits</span></div>
@@ -1068,7 +1069,7 @@ function renderModList(){
   return `<div>${h}</div>`;
 }
 function renderModArea(){document.getElementById('mod-area').innerHTML=viewMode==='grid'?renderModGrid():renderModList();}
-function renderHome(){renderWelcome();renderProfile();renderModArea();}
+function renderHome(){renderProfile();renderModArea();}
 
 function openSheet(mid){
   sheetMid=mid;sheetFilt='all';
