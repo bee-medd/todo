@@ -6,35 +6,72 @@
 <title>Residanat 2026</title>
 <style>
 :root {
-  --bg:       #ffffff;
-  --bg2:      #fafafa;
-  --bg3:      #f5f5f5;
-  --line:     #dbdbdb;
-  --line2:    #efefef;
-  --text:     #000000;
-  --text2:    #737373;
-  --text3:    #a8a8a8;
-  --accent:   #0095f6;
-  --accent-l: #e8f4fd;
-  --green:    #1e9f5e;
-  --green-l:  #e6f7ef;
-  --purple:   #9333ea;
-  --font:     -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --max:      480px;
-  --nav:      44px;
-  --bot:      49px;
+  --bg:         #ffffff;
+  --bg-alpha:   rgba(255,255,255,.95);
+  --bg2:        #fafafa;
+  --bg3:        #f5f5f5;
+  --line:       #dbdbdb;
+  --line2:      #efefef;
+  --text:       #000000;
+  --text2:      #737373;
+  --text3:      #a8a8a8;
+  --accent:     #0095f6;
+  --accent-l:   #e8f4fd;
+  --green:      #1e9f5e;
+  --green-l:    #e6f7ef;
+  --purple:     #9333ea;
+  --font:       -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --max:        480px;
+  --nav:        44px;
+  --bot:        49px;
 }
+
+body.dark-mode {
+  --bg:         #121212;
+  --bg-alpha:   rgba(18,18,18,.95);
+  --bg2:        #1a1a1a;
+  --bg3:        #262626;
+  --line:       #333333;
+  --line2:      #2a2a2a;
+  --text:       #ffffff;
+  --text2:      #a3a3a3;
+  --text3:      #737373;
+  --accent:     #3b82f6;
+  --accent-l:   rgba(59,130,246,0.15);
+  --green:      #22c55e;
+  --green-l:    rgba(34,197,94,0.15);
+  --purple:     #a855f7;
+}
+
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-html{background:#fafafa;overflow-x:hidden;}
-body{font-family:var(--font);background:var(--bg);color:var(--text);max-width:var(--max);margin:0 auto;min-height:100svh;-webkit-font-smoothing:antialiased;padding-bottom:calc(var(--bot) + env(safe-area-inset-bottom,0px));}
+html{background:var(--bg2);overflow-x:hidden;}
+body{font-family:var(--font);background:var(--bg);color:var(--text);max-width:var(--max);margin:0 auto;min-height:100svh;-webkit-font-smoothing:antialiased;padding-bottom:calc(var(--bot) + env(safe-area-inset-bottom,0px)); transition: background 0.2s, color 0.2s;}
 button{font-family:inherit;cursor:pointer;border:none;background:none;}
 input,textarea{font-family:inherit;}
 
 /* TOP BAR */
-.topbar{position:sticky;top:0;z-index:500;background:rgba(255,255,255,.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--line);height:var(--nav);display:flex;align-items:center;justify-content:space-between;padding:0 16px;}
+.topbar{position:sticky;top:0;z-index:500;background:var(--bg-alpha);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--line);height:var(--nav);display:flex;align-items:center;justify-content:space-between;padding:0 16px; transition: background 0.2s;}
 .topbar-title{font-size:16px;font-weight:700;color:var(--text);letter-spacing:-.3px;}
+.topbar-actions{display:flex; gap: 4px; align-items:center;}
 .icon-btn{width:32px;height:32px;display:flex;align-items:center;justify-content:center;color:var(--text);border-radius:50%;transition:background .12s;}
 .icon-btn:active{background:var(--bg3);}
+
+/* HEADER BACKGROUND (g.png) */
+.header-bg {
+  position: relative;
+  background: url('g.png') center/cover no-repeat;
+  background-color: var(--bg);
+  z-index: 1;
+}
+.header-bg::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--bg);
+  opacity: 0.88;
+  z-index: -1;
+  transition: background 0.2s;
+}
 
 /* PAGES */
 .page{display:none;}
@@ -57,6 +94,11 @@ input,textarea{font-family:inherit;}
 .pbar-label{display:flex;justify-content:space-between;margin-top:5px;}
 .pbar-label span{font-size:11px;color:var(--text2);}
 .pbar-label strong{font-size:11px;font-weight:600;color:var(--text);}
+
+/* COMPTEUR EN DIRECT */
+.online-counter{display:flex; align-items:center; justify-content:center; gap:6px; font-size:10px; color:var(--text3); margin-top:16px; font-weight:500; letter-spacing:0.2px;}
+.online-dot{width:5px; height:5px; background:var(--green); border-radius:50%; animation:pulse 2s infinite;}
+@keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(30,159,94,.4); } 70% { box-shadow: 0 0 0 4px rgba(30,159,94,0); } 100% { box-shadow: 0 0 0 0 rgba(30,159,94,0); } }
 
 /* VIEW TOGGLE */
 .view-bar{display:flex;border-bottom:1px solid var(--line);}
@@ -88,7 +130,7 @@ input,textarea{font-family:inherit;}
 .mrow-chev{color:var(--text3);margin-top:2px;}
 
 /* OVERLAY + SHEET */
-.overlay{position:fixed;inset:0;z-index:800;background:rgba(0,0,0,.4);opacity:0;pointer-events:none;transition:opacity .25s;}
+.overlay{position:fixed;inset:0;z-index:800;background:rgba(0,0,0,.5);opacity:0;pointer-events:none;transition:opacity .25s;}
 .overlay.show{opacity:1;pointer-events:all;}
 .sheet{position:fixed;bottom:0;left:50%;transform:translateX(-50%) translateY(100%);width:100%;max-width:var(--max);background:var(--bg);border-radius:12px 12px 0 0;max-height:92svh;display:flex;flex-direction:column;transition:transform .32s cubic-bezier(.32,0,.2,1);z-index:900;}
 .sheet.open{transform:translateX(-50%) translateY(0);}
@@ -143,7 +185,8 @@ input,textarea{font-family:inherit;}
 .badge.bfull .badge-lbl{color:var(--green);}
 .badge.bfull .bdot.on{background:var(--green);}
 .badge.rev .bdot.on{background:var(--purple);}
-.badge.rev:hover{border-color:var(--purple);background:#f5f0ff;}
+.badge.rev:hover{border-color:var(--purple);background:var(--bg2);}
+body.dark-mode .badge.rev:hover{background:rgba(168,85,247,0.15);}
 .badge.rev:hover .badge-lbl{color:var(--purple);}
 .badge.rev.bfull{background:var(--green-l);border-color:rgba(30,159,94,.3);}
 .badge.rev.bfull .badge-lbl{color:var(--green);}
@@ -158,8 +201,6 @@ input,textarea{font-family:inherit;}
 .search-inp::placeholder{color:var(--text3);}
 .sf-row{display:flex;gap:6px;margin-bottom:12px;overflow-x:auto;scrollbar-width:none;}
 .sf-row::-webkit-scrollbar{display:none;}
-.sfpill{flex-shrink:0;padding:5px 14px;font-size:13px;font-weight:500;color:var(--text2);background:var(--bg3);border:none;border-radius:99px;cursor:pointer;transition:all .12s;}
-.sfpill.active{background:var(--text);color:var(--bg);}
 .sres-block{border-bottom:1px solid var(--line2);margin-bottom:6px;}
 .sres-hdr{display:flex;align-items:center;gap:10px;padding:10px 0;cursor:pointer;}
 .sres-hdr-av{width:32px;height:32px;border-radius:50%;background:var(--bg3);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--text2);}
@@ -220,7 +261,7 @@ input,textarea{font-family:inherit;}
 .dua-amin{text-align:right;direction:rtl;font-family:'Amiri',serif;font-size:17px;color:var(--accent);}
 
 /* BOTTOM NAV */
-.botnav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:var(--max);z-index:600;background:rgba(255,255,255,.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid var(--line);height:calc(var(--bot) + env(safe-area-inset-bottom,0px));display:flex;align-items:flex-start;}
+.botnav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:var(--max);z-index:600;background:var(--bg-alpha);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid var(--line);height:calc(var(--bot) + env(safe-area-inset-bottom,0px));display:flex;align-items:flex-start; transition: background 0.2s;}
 .bnav{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;height:var(--bot);gap:2px;cursor:pointer;transition:opacity .1s;}
 .bnav:active{opacity:.4;}
 .bnav svg{display:block;color:var(--text3);transition:color .12s;}
@@ -231,11 +272,13 @@ input,textarea{font-family:inherit;}
 .qbadge{display:inline-flex;align-items:center;gap:3px;background:var(--bg3);border:1px solid var(--line2);border-radius:6px;padding:3px 7px;cursor:pointer;transition:all .12s;user-select:none;}
 .qbadge:active{transform:scale(.92);}
 .qbadge:hover{border-color:#f59e0b;background:#fffbeb;}
+body.dark-mode .qbadge:hover{background:rgba(245,158,11,.15);}
 .qstar{font-size:10px;color:var(--line);transition:color .15s;line-height:1;}
 .qstar.on{color:#f59e0b;}
 .qbadge-lbl{font-size:10px;font-weight:600;color:var(--text2);letter-spacing:.2px;transition:color .12s;}
 .qbadge:hover .qbadge-lbl{color:#f59e0b;}
 .qbadge.qmax{background:#fffbeb;border-color:rgba(245,158,11,.35);}
+body.dark-mode .qbadge.qmax{background:rgba(245,158,11,.15);}
 .qbadge.qmax .qbadge-lbl{color:#f59e0b;}
 
 /* LEVEL PILL */
@@ -247,30 +290,38 @@ input,textarea{font-family:inherit;}
 .lvl-pill.lvl0 .lvl-lbl{color:var(--text3);}
 .lvl-pill.lvl0 .lvl-dot{background:var(--text3);}
 .lvl-pill.lvl1{background:#f0fdf4;border-color:rgba(22,163,74,.3);}
+body.dark-mode .lvl-pill.lvl1{background:rgba(22,163,74,.15);}
 .lvl-pill.lvl1 .lvl-lbl{color:#16a34a;}
 .lvl-pill.lvl1 .lvl-dot{background:#16a34a;}
 .lvl-pill.lvl2{background:#fff7ed;border-color:rgba(234,88,12,.3);}
+body.dark-mode .lvl-pill.lvl2{background:rgba(234,88,12,.15);}
 .lvl-pill.lvl2 .lvl-lbl{color:#ea580c;}
 .lvl-pill.lvl2 .lvl-dot{background:#ea580c;}
 .lvl-pill.lvl3{background:#fef2f2;border-color:rgba(220,38,38,.3);}
+body.dark-mode .lvl-pill.lvl3{background:rgba(220,38,38,.15);}
 .lvl-pill.lvl3 .lvl-lbl{color:#dc2626;}
 .lvl-pill.lvl3 .lvl-dot{background:#dc2626;}
 
-/* MISC */
 .empty{text-align:center;padding:48px 20px;font-size:14px;color:var(--text2);}
 </style>
 </head>
 <body>
 
-<nav class="topbar">
+<nav class="topbar header-bg">
   <span class="topbar-title">Residanat 2026</span>
-  <button class="icon-btn" onclick="confirmReset()">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.12"/></svg>
-  </button>
+  <div class="topbar-actions">
+    <button class="icon-btn" onclick="toggleDark()" title="Mode Sombre/Clair">
+      <svg id="icon-moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      <svg id="icon-sun" style="display:none;" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+    </button>
+    <button class="icon-btn" onclick="confirmReset()" title="Réinitialiser">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.12"/></svg>
+    </button>
+  </div>
 </nav>
 
 <div id="page-home" class="page active">
-  <div class="profile" id="home-profile"></div>
+  <div class="profile header-bg" id="home-profile"></div>
   <div class="view-bar">
     <div class="vtab active" id="vtab-grid" onclick="setView('grid',this)">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="7" height="7" rx=".5"/><rect x="14" y="3" width="7" height="7" rx=".5"/><rect x="3" y="14" width="7" height="7" rx=".5"/><rect x="14" y="14" width="7" height="7" rx=".5"/></svg>
@@ -421,6 +472,8 @@ const LVL_DATA=[
   {lbl:'Difficile',cls:'lvl3'}
 ];
 let S={};
+let currentUsersCount = null; // Cache pour le compteur réel (évite le spam d'API)
+
 const load=()=>{try{S=JSON.parse(localStorage.getItem('res9')||'{}');}catch(e){S={};}};
 const save=()=>{localStorage.setItem('res9',JSON.stringify(S));};
 const modStats=m=>{const all=flat(m);const dc=all.filter((_,i)=>S[kC(m.id,i)]).length;return{all,dc,pct:all.length?Math.round(dc/all.length*100):0,done:dc===all.length&&all.length>0};};
@@ -428,10 +481,55 @@ const totals=()=>{let tot=0,done=0;DATA.forEach(m=>flat(m).forEach((_,i)=>{tot++
 
 function ring(pct,r,sw,clr,sz){
   const C=2*Math.PI*r,d=(pct/100*C).toFixed(2);
-  return `<svg width="${sz}" height="${sz}" viewBox="0 0 ${sz} ${sz}"><circle cx="${sz/2}" cy="${sz/2}" r="${r}" fill="none" stroke="#efefef" stroke-width="${sw}"/><circle cx="${sz/2}" cy="${sz/2}" r="${r}" fill="none" stroke="${clr}" stroke-width="${sw}" stroke-linecap="round" stroke-dasharray="${d} ${C.toFixed(2)}"/></svg>`;
+  return `<svg width="${sz}" height="${sz}" viewBox="0 0 ${sz} ${sz}"><circle cx="${sz/2}" cy="${sz/2}" r="${r}" fill="none" stroke="var(--line2)" stroke-width="${sw}"/><circle cx="${sz/2}" cy="${sz/2}" r="${r}" fill="none" stroke="${clr}" stroke-width="${sw}" stroke-linecap="round" stroke-dasharray="${d} ${C.toFixed(2)}"/></svg>`;
 }
 
 let viewMode='grid',sheetMid=null,sheetFilt='all',searchQ='',searchFilt='all';
+
+function initTheme(){
+  const saved=localStorage.getItem('res9_theme');
+  const isDark=saved==='dark'||(!saved&&window.matchMedia('(prefers-color-scheme: dark)').matches);
+  if(isDark){
+    document.body.classList.add('dark-mode');
+    document.getElementById('icon-moon').style.display='none';
+    document.getElementById('icon-sun').style.display='block';
+  }
+}
+function toggleDark(){
+  const isDark=document.body.classList.toggle('dark-mode');
+  localStorage.setItem('res9_theme',isDark?'dark':'light');
+  document.getElementById('icon-moon').style.display=isDark?'none':'block';
+  document.getElementById('icon-sun').style.display=isDark?'block':'none';
+}
+
+// Fonction asynchrone pour un compteur réel et précis : API sans clé.
+async function trackAndFetchUsers() {
+  const el = document.getElementById('u-count');
+  
+  if (currentUsersCount !== null) {
+    if (el) el.innerText = currentUsersCount.toLocaleString('fr-FR');
+    return;
+  }
+  
+  try {
+    const counted = localStorage.getItem('res9_counted');
+    // On incrémente la base de données de l'API s'il n'a jamais été compté sur cet appareil
+    const url = 'https://api.counterapi.dev/v1/residanat2026_app/users' + (counted ? '/' : '/up');
+    const res = await fetch(url);
+    const data = await res.json();
+    
+    if (data && typeof data.count === 'number') {
+      currentUsersCount = data.count;
+      if (!counted) localStorage.setItem('res9_counted', 'true');
+      if (el) el.innerText = currentUsersCount.toLocaleString('fr-FR');
+    } else {
+      if (el) el.innerText = "---";
+    }
+  } catch(e) {
+    // Si l'API est bloquée (bloqueur de pub ou hors ligne)
+    if (el) el.innerText = "---";
+  }
+}
 
 function showPage(id,btn){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
@@ -447,6 +545,7 @@ function setView(v,el){
   el.classList.add('active');
   renderModArea();
 }
+
 function renderProfile(){
   const{tot,done,pct}=totals();
   const mDone=DATA.filter(m=>{const{dc,all}=modStats(m);return dc===all.length&&all.length>0;}).length;
@@ -466,8 +565,13 @@ function renderProfile(){
     <div class="profile-name">Residanat 2026</div>
     <div class="profile-bio">Concours de Résidanat de Constantine</div>
     <div class="pbar-track"><div class="pbar-fill" style="width:${pct}%;background:${clr}"></div></div>
-    <div class="pbar-label"><span>Progression générale</span><strong>${pct}%</strong></div>`;
+    <div class="pbar-label"><span>Progression générale</span><strong>${pct}%</strong></div>
+
+    <div class="online-counter"><div class="online-dot"></div><span id="u-count">Calcul...</span> utilisateurs engagés</div>
+  `;
+  trackAndFetchUsers();
 }
+
 function renderModGrid(){
   let h='';
   DATA.forEach(m=>{
@@ -548,24 +652,25 @@ function courseRow(m,i,name){
   const hasNote=!!(S[kN(m.id,i)]||'').trim();
   const noteOpen=!!S[kX(m.id,i)];
   const noteVal=(S[kN(m.id,i)]||'').replace(/"/g,'&quot;').replace(/</g,'&lt;');
-  // QCM badges
+  
   let bdg=m.qcm.map(qt=>{
     const n=S[kQ(m.id,i,qt)]||0,full=n===MAX;
     let dots='';for(let d=0;d<MAX;d++) dots+=`<span class="bdot${d<n?' on':''}"></span>`;
     return `<span class="badge${full?' bfull':''}" onclick="togQ(event,'${m.id}',${i},'${qt}')"><span class="badge-lbl">${QT[qt]}</span><span class="bdots">${dots}</span></span>`;
   }).join('');
-  // Revision badge
+  
   const rv=S[kR(m.id,i)]||0,rvF=rv===MAX;
   let rvd='';for(let d=0;d<MAX;d++) rvd+=`<span class="bdot${d<rv?' on':''}"></span>`;
   bdg+=`<span class="badge rev${rvF?' bfull':''}" onclick="togR(event,'${m.id}',${i})"><span class="badge-lbl">Révision</span><span class="bdots">${rvd}</span></span>`;
-  // Quality badge (0–3 stars)
+  
   const ql=S[kQl(m.id,i)]||0;
   let stars='';for(let d=0;d<MAXQ;d++) stars+=`<span class="qstar${d<ql?' on':''}">★</span>`;
   bdg+=`<span class="qbadge${ql===MAXQ?' qmax':''}" onclick="togQl(event,'${m.id}',${i})"><span class="qbadge-lbl">Qualité</span>${stars}</span>`;
-  // Level pill (0=none,1=Facile,2=Moyen,3=Difficile)
+  
   const lv=S[kLv(m.id,i)]||0;
   const lvInfo=LVL_DATA[lv];
   bdg+=`<span class="lvl-pill ${lvInfo.cls}" onclick="togLv(event,'${m.id}',${i})"><span class="lvl-dot"></span><span class="lvl-lbl">${lv===0?'Niveau':lvInfo.lbl}</span></span>`;
+  
   return `<div class="crow${done?' cdone':''}${hasNote?' has-note':''}${noteOpen?' note-open':''}" id="crow_${m.id}_${i}">
     <div class="cbox" onclick="togC(event,'${m.id}',${i})"><svg class="cchk" width="10" height="8" viewBox="0 0 10 8" fill="none"><polyline points="1,4 3.5,6.5 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
     <div class="cinfo"><div class="cname" onclick="togC(event,'${m.id}',${i})">${name}</div><div class="cbadges">${bdg}</div></div>
@@ -656,7 +761,7 @@ function renderStats(){
     </div>`;
   });
   document.getElementById('stats-pg').innerHTML=`
-    <div class="stats-profile">
+    <div class="stats-profile header-bg">
       <div class="stats-top">
         <div class="stats-av">${ring(cp,28,3,clr,72)}<div class="stats-av-inner"><div class="stats-pct">${cp}%</div><div class="stats-pct-l">fait</div></div></div>
         <div class="stats-meta">
@@ -697,7 +802,9 @@ document.getElementById('sheet-drag').addEventListener('touchstart',e=>{ty0=e.to
 document.getElementById('sheet-drag').addEventListener('touchend',e=>{if(e.changedTouches[0].clientY-ty0>55)closeSheet();},{passive:true});
 document.getElementById('search-inp').addEventListener('input',function(){searchQ=this.value;renderSearch();});
 
-load();renderHome();
+initTheme();
+load();
+renderHome();
 </script>
 </body>
 </html>
