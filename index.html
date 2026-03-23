@@ -56,7 +56,7 @@ input,textarea{font-family:inherit;}
 .icon-btn{width:32px;height:32px;display:flex;align-items:center;justify-content:center;color:var(--text);border-radius:50%;transition:background .12s;}
 .icon-btn:active{background:var(--bg3);}
 
-/* HEADER BACKGROUND (g.png) */
+/* HEADER BACKGROUND */
 .header-bg {
   position: relative;
   background: url('g.png') center/cover no-repeat;
@@ -77,8 +77,154 @@ input,textarea{font-family:inherit;}
 .page{display:none;}
 .page.active{display:block;}
 
+/* ══════════════════════════════════════
+   WELCOME CARD
+══════════════════════════════════════ */
+.welcome-section {
+  padding: 16px 16px 0;
+}
+
+.welcome-card {
+  background: linear-gradient(135deg, var(--accent) 0%, #0077cc 100%);
+  border-radius: 18px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 24px rgba(0,149,246,0.25);
+  animation: welcomeFadeIn 0.5s ease;
+}
+@keyframes welcomeFadeIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.welcome-card::after {
+  content: '';
+  position: absolute;
+  top: -30px; right: -30px;
+  width: 120px; height: 120px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.08);
+  pointer-events: none;
+}
+.welcome-card::before {
+  content: '';
+  position: absolute;
+  bottom: -20px; left: 40%;
+  width: 80px; height: 80px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.06);
+  pointer-events: none;
+}
+
+/* PHOTO AVATAR */
+.wc-photo-wrap {
+  position: relative;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+.wc-photo {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 2.5px solid rgba(255,255,255,0.5);
+  background: rgba(255,255,255,0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  transition: border-color 0.2s, transform 0.15s;
+  font-size: 24px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -0.5px;
+  flex-shrink: 0;
+}
+.wc-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+.wc-photo-wrap:active .wc-photo {
+  transform: scale(0.93);
+}
+.wc-photo-edit {
+  position: absolute;
+  bottom: 0; right: 0;
+  width: 22px; height: 22px;
+  background: #fff;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+}
+.wc-photo-edit svg { color: var(--accent); }
+#photo-input { display: none; }
+
+/* WELCOME TEXT */
+.wc-info {
+  flex: 1;
+  min-width: 0;
+}
+.wc-greeting {
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.75);
+  margin-bottom: 3px;
+  letter-spacing: 0.3px;
+}
+.wc-name {
+  font-size: 20px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.5px;
+  margin-bottom: 6px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.wc-badges {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.wc-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(255,255,255,0.18);
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 99px;
+  padding: 3px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #fff;
+}
+.wc-badge svg { opacity: 0.85; }
+
+/* MINI PROGRESS RING IN CARD */
+.wc-ring-wrap {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+.wc-ring-pct {
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1;
+}
+.wc-ring-lbl {
+  font-size: 9px;
+  color: rgba(255,255,255,0.7);
+}
+
 /* PROFILE */
-.profile{padding:18px 16px 16px;border-bottom:1px solid var(--line);}
+.profile{padding:14px 16px 16px;border-bottom:1px solid var(--line);}
 .profile-row{display:flex;align-items:center;gap:24px;margin-bottom:14px;}
 .profile-avatar{width:80px;height:80px;border-radius:50%;flex-shrink:0;position:relative;}
 .profile-avatar svg{position:absolute;inset:0;width:100%;height:100%;transform:rotate(-90deg);}
@@ -336,6 +482,22 @@ body.dark-mode .lvl-pill.lvl3{background:rgba(220,38,38,.15);}
 .auth-msg.err{color:#dc2626;}
 .auth-msg.ok{color:var(--green);}
 .auth-users-info{font-size:11px;color:var(--text3);text-align:center;margin-top:16px;}
+
+/* MOTIVATIONAL QUOTE */
+.motivation-strip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--bg3);
+  border: 1px solid var(--line2);
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin: 12px 16px 0;
+  animation: welcomeFadeIn 0.6s ease 0.1s both;
+}
+.motivation-icon { font-size: 18px; flex-shrink: 0; }
+.motivation-text { font-size: 12px; color: var(--text2); line-height: 1.5; }
+.motivation-text strong { color: var(--text); font-weight: 600; }
 </style>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
@@ -401,7 +563,11 @@ body.dark-mode .lvl-pill.lvl3{background:rgba(220,38,38,.15);}
   </div>
 </nav>
 
+<!-- Hidden file input for photo upload -->
+<input type="file" id="photo-input" accept="image/*" onchange="handlePhotoUpload(event)">
+
 <div id="page-home" class="page active">
+  <div id="welcome-area"></div>
   <div class="profile header-bg" id="home-profile"></div>
   <div class="view-bar">
     <div class="vtab active" id="vtab-grid" onclick="setView('grid',this)">
@@ -557,6 +723,7 @@ let currentUser = null;
 let fbAuth = null;
 let fbDb = null;
 let saveTimer = null;
+let currentUsersCount = null;
 
 const load = async () => {
   if(!currentUser){S={};return;}
@@ -568,7 +735,6 @@ const load = async () => {
 
 const save = () => {
   if(!currentUser) return;
-  // debounce 1.5s pour éviter trop d'écritures
   clearTimeout(saveTimer);
   saveTimer = setTimeout(async ()=>{
     try{ await fbDb.collection('progress').doc(currentUser.uid).set({state: S, updatedAt: new Date().toISOString()}); }
@@ -585,15 +751,146 @@ function ring(pct,r,sw,clr,sz){
 
 let viewMode='grid',sheetMid=null,sheetFilt='all',searchQ='',searchFilt='all';
 
+/* ══════════════════════════════════════
+   PHOTO UPLOAD
+══════════════════════════════════════ */
+function getUserPhotoKey(){
+  return currentUser ? `res9_photo_${currentUser.uid}` : 'res9_photo_guest';
+}
+function getUserPhoto(){
+  try { return localStorage.getItem(getUserPhotoKey()) || ''; } catch(e){ return ''; }
+}
+function handlePhotoUpload(event){
+  const file = event.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e){
+    const dataUrl = e.target.result;
+    // Compress: draw on canvas max 200x200
+    const img = new Image();
+    img.onload = function(){
+      const canvas = document.createElement('canvas');
+      const size = Math.min(img.width, img.height);
+      canvas.width = 200; canvas.height = 200;
+      const ctx = canvas.getContext('2d');
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(100,100,100,0,Math.PI*2);
+      ctx.clip();
+      const scale = 200/size;
+      const dx = (img.width - size)/2;
+      const dy = (img.height - size)/2;
+      ctx.drawImage(img, dx, dy, size, size, 0, 0, 200, 200);
+      ctx.restore();
+      const compressed = canvas.toDataURL('image/jpeg', 0.8);
+      try { localStorage.setItem(getUserPhotoKey(), compressed); } catch(e){}
+      renderWelcome();
+    };
+    img.src = dataUrl;
+  };
+  reader.readAsDataURL(file);
+  // Reset input
+  event.target.value = '';
+}
+function triggerPhotoUpload(){
+  document.getElementById('photo-input').click();
+}
 
-/* ══════════════════════════════════════════
+/* ══════════════════════════════════════
+   GREETING & MOTIVATION
+══════════════════════════════════════ */
+function getGreeting(){
+  const h = new Date().getHours();
+  if(h >= 5  && h < 12) return {text:'Bonjour', emoji:'☀️'};
+  if(h >= 12 && h < 17) return {text:'Bon après-midi', emoji:'🌤️'};
+  if(h >= 17 && h < 21) return {text:'Bonsoir', emoji:'🌙'};
+  return {text:'Bonne nuit', emoji:'⭐'};
+}
+function getUserDisplayName(){
+  if(!currentUser) return 'Médecin';
+  const email = currentUser.email || '';
+  const name = email.split('@')[0];
+  // Capitalize first letter
+  return name.charAt(0).toUpperCase() + name.slice(1);
+}
+const MOTIVATIONS = [
+  {icon:'🏆', text:'<strong>Chaque cours terminé</strong> te rapproche du résidanat. Continue !'},
+  {icon:'💡', text:'<strong>La régularité</strong> bat toujours l\'intensité. Révise chaque jour.'},
+  {icon:'🧠', text:'<strong>La médecine se construit</strong> brique par brique. Tu es sur la bonne voie.'},
+  {icon:'⚡', text:'<strong>Pas de grand succès</strong> sans petits efforts quotidiens.'},
+  {icon:'🌟', text:'<strong>Tu as choisi la voie difficile.</strong> C\'est pour ça que tu réussiras.'},
+  {icon:'📚', text:'<strong>Chaque page lue</strong> est un pas de plus vers tes futurs patients.'},
+];
+function getDailyMotivation(){
+  const day = new Date().getDate();
+  return MOTIVATIONS[day % MOTIVATIONS.length];
+}
+
+/* ══════════════════════════════════════
+   RENDER WELCOME CARD
+══════════════════════════════════════ */
+function renderWelcome(){
+  const {text, emoji} = getGreeting();
+  const name = getUserDisplayName();
+  const photo = getUserPhoto();
+  const {tot, done, pct} = totals();
+  const mDone = DATA.filter(m=>{const{dc,all}=modStats(m);return dc===all.length&&all.length>0;}).length;
+  const mot = getDailyMotivation();
+
+  // Ring SVG for welcome card (white)
+  const wring = (pct, r, sw, sz) => {
+    const C = 2*Math.PI*r, d = (pct/100*C).toFixed(2);
+    return `<svg width="${sz}" height="${sz}" viewBox="0 0 ${sz} ${sz}"><circle cx="${sz/2}" cy="${sz/2}" r="${r}" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="${sw}"/><circle cx="${sz/2}" cy="${sz/2}" r="${r}" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="${sw}" stroke-linecap="round" stroke-dasharray="${d} ${C.toFixed(2)}" transform="rotate(-90 ${sz/2} ${sz/2})"/></svg>`;
+  };
+
+  const photoHtml = photo
+    ? `<img src="${photo}" alt="Photo">`
+    : `<span>${name.charAt(0).toUpperCase()}</span>`;
+
+  document.getElementById('welcome-area').innerHTML = `
+    <div class="welcome-section">
+      <div class="welcome-card">
+        <div class="wc-photo-wrap" onclick="triggerPhotoUpload()" title="Changer la photo">
+          <div class="wc-photo">${photoHtml}</div>
+          <div class="wc-photo-edit">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+          </div>
+        </div>
+        <div class="wc-info">
+          <div class="wc-greeting">${emoji} ${text} !</div>
+          <div class="wc-name">${name}</div>
+          <div class="wc-badges">
+            <span class="wc-badge">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+              ${done} / ${tot} cours
+            </span>
+            ${mDone > 0 ? `<span class="wc-badge">🎯 ${mDone} module${mDone>1?'s':''} fini${mDone>1?'s':''}</span>` : ''}
+          </div>
+        </div>
+        <div class="wc-ring-wrap">
+          <div style="position:relative;width:52px;height:52px;">
+            <div style="position:absolute;inset:0;">${wring(pct, 22, 3, 52)}</div>
+            <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+              <span style="font-size:13px;font-weight:800;color:#fff;line-height:1;">${pct}%</span>
+              <span style="font-size:8px;color:rgba(255,255,255,0.7);margin-top:1px;">fait</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="motivation-strip">
+      <span class="motivation-icon">${mot.icon}</span>
+      <span class="motivation-text">${mot.text}</span>
+    </div>
+  `;
+}
+
+/* ══════════════════════════════════════
    FIREBASE AUTH
-══════════════════════════════════════════ */
-
+══════════════════════════════════════ */
 function showAuthScreen(){
   document.getElementById('auth-screen').classList.add('show');
 }
-
 function switchAuthTab(tab, el){
   document.querySelectorAll('.atab').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('.auth-panel').forEach(p=>p.classList.remove('active'));
@@ -601,7 +898,6 @@ function switchAuthTab(tab, el){
   document.getElementById('auth-panel-'+tab).classList.add('active');
   document.getElementById(tab==='login'?'login-msg':'reg-msg').textContent='';
 }
-
 async function authLogin(){
   const u = document.getElementById('login-user').value.trim().toLowerCase();
   const p = document.getElementById('login-pass').value;
@@ -611,7 +907,6 @@ async function authLogin(){
   btn.disabled=true; msg.className='auth-msg'; msg.textContent='Connexion...';
   try{
     await fbAuth.signInWithEmailAndPassword(u, p);
-    // onAuthStateChanged prend le relais
   }catch(e){
     btn.disabled=false;
     msg.className='auth-msg err';
@@ -625,7 +920,6 @@ async function authLogin(){
     msg.textContent = codes[e.code] || ('Erreur : '+e.message);
   }
 }
-
 async function authRegister(){
   const u = document.getElementById('reg-user').value.trim().toLowerCase();
   const p = document.getElementById('reg-pass').value;
@@ -636,7 +930,6 @@ async function authRegister(){
   btn.disabled=true; msg.className='auth-msg'; msg.textContent='Création du compte...';
   try{
     await fbAuth.createUserWithEmailAndPassword(u, p);
-    // onAuthStateChanged prend le relais
   }catch(e){
     btn.disabled=false;
     msg.className='auth-msg err';
@@ -648,18 +941,15 @@ async function authRegister(){
     msg.textContent = codes[e.code] || ('Erreur : '+e.message);
   }
 }
-
 async function logout(){
   if(!confirm('Se déconnecter ?')) return;
   await fbAuth.signOut();
-  // onAuthStateChanged réinitialise tout
   ['login-user','login-pass','reg-user','reg-pass'].forEach(id=>{
     const el=document.getElementById(id); if(el) el.value='';
   });
   document.getElementById('login-msg').textContent='';
   document.getElementById('reg-msg').textContent='';
 }
-
 async function showApp(){
   await load();
   document.getElementById('app-wrapper').style.display='block';
@@ -685,22 +975,17 @@ function toggleDark(){
   document.getElementById('icon-sun').style.display=isDark?'block':'none';
 }
 
-// Fonction asynchrone pour un compteur réel et précis : API sans clé.
 async function trackAndFetchUsers() {
   const el = document.getElementById('u-count');
-  
   if (currentUsersCount !== null) {
     if (el) el.innerText = currentUsersCount.toLocaleString('fr-FR');
     return;
   }
-  
   try {
     const counted = localStorage.getItem('res9_counted');
-    // On incrémente la base de données de l'API s'il n'a jamais été compté sur cet appareil
     const url = 'https://api.counterapi.dev/v1/residanat2026_app/users' + (counted ? '/' : '/up');
     const res = await fetch(url);
     const data = await res.json();
-    
     if (data && typeof data.count === 'number') {
       currentUsersCount = data.count;
       if (!counted) localStorage.setItem('res9_counted', 'true');
@@ -709,7 +994,6 @@ async function trackAndFetchUsers() {
       if (el) el.innerText = "---";
     }
   } catch(e) {
-    // Si l'API est bloquée (bloqueur de pub ou hors ligne)
     if (el) el.innerText = "---";
   }
 }
@@ -737,7 +1021,7 @@ function renderProfile(){
     <div class="profile-row">
       <div class="profile-avatar">
         ${ring(pct,34,3,clr,80)}
-        <div class="profile-avatar-inner">${currentUser?currentUser.username[0].toUpperCase():"R"}</div>
+        <div class="profile-avatar-inner">${currentUser?currentUser.email[0].toUpperCase():"R"}</div>
       </div>
       <div class="profile-stats">
         <div class="pstat"><span class="pstat-v">${done}</span><span class="pstat-l">faits</span></div>
@@ -749,7 +1033,6 @@ function renderProfile(){
     <div class="profile-bio">Concours de Résidanat de Constantine</div>
     <div class="pbar-track"><div class="pbar-fill" style="width:${pct}%;background:${clr}"></div></div>
     <div class="pbar-label"><span>Progression générale</span><strong>${pct}%</strong></div>
-
     <div class="online-counter"><div class="online-dot"></div><span id="u-count">Calcul...</span> utilisateurs engagés</div>
   `;
   trackAndFetchUsers();
@@ -785,7 +1068,7 @@ function renderModList(){
   return `<div>${h}</div>`;
 }
 function renderModArea(){document.getElementById('mod-area').innerHTML=viewMode==='grid'?renderModGrid():renderModList();}
-function renderHome(){renderProfile();renderModArea();}
+function renderHome(){renderWelcome();renderProfile();renderModArea();}
 
 function openSheet(mid){
   sheetMid=mid;sheetFilt='all';
@@ -835,25 +1118,20 @@ function courseRow(m,i,name){
   const hasNote=!!(S[kN(m.id,i)]||'').trim();
   const noteOpen=!!S[kX(m.id,i)];
   const noteVal=(S[kN(m.id,i)]||'').replace(/"/g,'&quot;').replace(/</g,'&lt;');
-  
   let bdg=m.qcm.map(qt=>{
     const n=S[kQ(m.id,i,qt)]||0,full=n===MAX;
     let dots='';for(let d=0;d<MAX;d++) dots+=`<span class="bdot${d<n?' on':''}"></span>`;
     return `<span class="badge${full?' bfull':''}" onclick="togQ(event,'${m.id}',${i},'${qt}')"><span class="badge-lbl">${QT[qt]}</span><span class="bdots">${dots}</span></span>`;
   }).join('');
-  
   const rv=S[kR(m.id,i)]||0,rvF=rv===MAX;
   let rvd='';for(let d=0;d<MAX;d++) rvd+=`<span class="bdot${d<rv?' on':''}"></span>`;
   bdg+=`<span class="badge rev${rvF?' bfull':''}" onclick="togR(event,'${m.id}',${i})"><span class="badge-lbl">Révision</span><span class="bdots">${rvd}</span></span>`;
-  
   const ql=S[kQl(m.id,i)]||0;
   let stars='';for(let d=0;d<MAXQ;d++) stars+=`<span class="qstar${d<ql?' on':''}">★</span>`;
   bdg+=`<span class="qbadge${ql===MAXQ?' qmax':''}" onclick="togQl(event,'${m.id}',${i})"><span class="qbadge-lbl">Qualité</span>${stars}</span>`;
-  
   const lv=S[kLv(m.id,i)]||0;
   const lvInfo=LVL_DATA[lv];
   bdg+=`<span class="lvl-pill ${lvInfo.cls}" onclick="togLv(event,'${m.id}',${i})"><span class="lvl-dot"></span><span class="lvl-lbl">${lv===0?'Niveau':lvInfo.lbl}</span></span>`;
-  
   return `<div class="crow${done?' cdone':''}${hasNote?' has-note':''}${noteOpen?' note-open':''}" id="crow_${m.id}_${i}">
     <div class="cbox" onclick="togC(event,'${m.id}',${i})"><svg class="cchk" width="10" height="8" viewBox="0 0 10 8" fill="none"><polyline points="1,4 3.5,6.5 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
     <div class="cinfo"><div class="cname" onclick="togC(event,'${m.id}',${i})">${name}</div><div class="cbadges">${bdg}</div></div>
@@ -1002,7 +1280,6 @@ firebase.initializeApp(firebaseConfig);
 fbAuth = firebase.auth();
 fbDb  = firebase.firestore();
 
-// Session persistante : onAuthStateChanged gère tout
 fbAuth.onAuthStateChanged(async user => {
   document.getElementById('loading-screen').style.display = 'none';
   if(user){
