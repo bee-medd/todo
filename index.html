@@ -4,6 +4,15 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Residanat 2026</title>
+<link rel="manifest" href="/todo/manifest.json">
+<meta name="theme-color" content="#0095f6">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Residanat">
+<script>
+  if('serviceWorker' in navigator){
+    navigator.serviceWorker.register('/todo/sw.js');
+  }
+</script>
 <style>
 :root {
   --bg:         #ffffff;
