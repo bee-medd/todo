@@ -303,16 +303,97 @@ body.dark-mode .lvl-pill.lvl3{background:rgba(220,38,38,.15);}
 .lvl-pill.lvl3 .lvl-dot{background:#dc2626;}
 
 .empty{text-align:center;padding:48px 20px;font-size:14px;color:var(--text2);}
+
+/* ── LOADING SCREEN ── */
+#loading-screen{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;}
+.ls-logo{font-size:22px;font-weight:800;color:var(--text);letter-spacing:-.5px;}
+.ls-spin{width:24px;height:24px;border:2.5px solid var(--line2);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.ls-err{font-size:13px;color:#dc2626;text-align:center;max-width:280px;line-height:1.5;}
+
+/* ── AUTH SCREEN ── */
+#auth-screen{position:fixed;inset:0;z-index:9998;background:var(--bg);display:none;flex-direction:column;align-items:center;justify-content:center;padding:24px;}
+#auth-screen.show{display:flex;}
+.auth-logo{font-size:26px;font-weight:800;color:var(--text);letter-spacing:-.8px;margin-bottom:8px;}
+.auth-sub{font-size:13px;color:var(--text2);margin-bottom:32px;text-align:center;}
+.auth-box{width:100%;max-width:360px;background:var(--bg);border:1px solid var(--line);border-radius:14px;overflow:hidden;}
+.auth-tabs{display:flex;border-bottom:1px solid var(--line);}
+.atab{flex:1;height:44px;font-size:14px;font-weight:600;color:var(--text2);background:none;border:none;cursor:pointer;transition:color .15s,background .15s;position:relative;}
+.atab::after{content:'';position:absolute;bottom:0;left:20%;right:20%;height:2px;background:var(--accent);border-radius:99px;opacity:0;transition:opacity .15s;}
+.atab.active{color:var(--text);}
+.atab.active::after{opacity:1;}
+.auth-panel{display:none;padding:20px;}
+.auth-panel.active{display:block;}
+.auth-field{margin-bottom:12px;}
+.auth-label{font-size:12px;font-weight:600;color:var(--text2);margin-bottom:5px;display:block;letter-spacing:.2px;}
+.auth-input{width:100%;height:42px;background:var(--bg3);border:1.5px solid var(--line);border-radius:10px;padding:0 14px;font-size:14px;color:var(--text);outline:none;transition:border-color .15s;}
+.auth-input:focus{border-color:var(--accent);}
+.auth-input::placeholder{color:var(--text3);}
+.auth-btn{width:100%;height:42px;background:var(--accent);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;margin-top:4px;transition:opacity .12s;}
+.auth-btn:active{opacity:.8;}
+.auth-btn:disabled{opacity:.5;cursor:not-allowed;}
+.auth-msg{font-size:12px;margin-top:10px;text-align:center;min-height:16px;}
+.auth-msg.err{color:#dc2626;}
+.auth-msg.ok{color:var(--green);}
+.auth-users-info{font-size:11px;color:var(--text3);text-align:center;margin-top:16px;}
 </style>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
 
+<div id="loading-screen">
+  <div class="ls-logo">Résidanat 2026</div>
+  <div class="ls-spin"></div>
+</div>
+
+<div id="auth-screen">
+  <div class="auth-logo">Résidanat 2026</div>
+  <div class="auth-sub">Votre progression, vos révisions.</div>
+  <div class="auth-box">
+    <div class="auth-tabs">
+      <button class="atab active" onclick="switchAuthTab('login',this)">Connexion</button>
+      <button class="atab" onclick="switchAuthTab('register',this)">Inscription</button>
+    </div>
+    <div class="auth-panel active" id="auth-panel-login">
+      <div class="auth-field">
+        <label class="auth-label">ADRESSE EMAIL</label>
+        <input class="auth-input" id="login-user" type="email" placeholder="exemple@mail.com" autocomplete="email" autocapitalize="none">
+      </div>
+      <div class="auth-field">
+        <label class="auth-label">MOT DE PASSE</label>
+        <input class="auth-input" id="login-pass" type="password" placeholder="••••••••" autocomplete="current-password">
+      </div>
+      <button class="auth-btn" id="login-btn" onclick="authLogin()">Se connecter</button>
+      <div class="auth-msg" id="login-msg"></div>
+    </div>
+    <div class="auth-panel" id="auth-panel-register">
+      <div class="auth-field">
+        <label class="auth-label">ADRESSE EMAIL</label>
+        <input class="auth-input" id="reg-user" type="email" placeholder="exemple@mail.com" autocomplete="email" autocapitalize="none">
+      </div>
+      <div class="auth-field">
+        <label class="auth-label">MOT DE PASSE</label>
+        <input class="auth-input" id="reg-pass" type="password" placeholder="••••••••" autocomplete="new-password">
+      </div>
+      <button class="auth-btn" id="reg-btn" onclick="authRegister()">Créer mon compte</button>
+      <div class="auth-msg" id="reg-msg"></div>
+    </div>
+  </div>
+  <div class="auth-users-info" id="auth-user-count"></div>
+</div>
+
+<div id="app-wrapper" style="display:none;">
 <nav class="topbar header-bg">
   <span class="topbar-title">Residanat 2026</span>
   <div class="topbar-actions">
     <button class="icon-btn" onclick="toggleDark()" title="Mode Sombre/Clair">
       <svg id="icon-moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
       <svg id="icon-sun" style="display:none;" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+    </button>
+    <button class="icon-btn" onclick="logout()" title="Déconnexion" id="btn-logout">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
     </button>
     <button class="icon-btn" onclick="confirmReset()" title="Réinitialiser">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.12"/></svg>
@@ -472,10 +553,28 @@ const LVL_DATA=[
   {lbl:'Difficile',cls:'lvl3'}
 ];
 let S={};
-let currentUsersCount = null; // Cache pour le compteur réel (évite le spam d'API)
+let currentUser = null;
+let fbAuth = null;
+let fbDb = null;
+let saveTimer = null;
 
-const load=()=>{try{S=JSON.parse(localStorage.getItem('res9')||'{}');}catch(e){S={};}};
-const save=()=>{localStorage.setItem('res9',JSON.stringify(S));};
+const load = async () => {
+  if(!currentUser){S={};return;}
+  try{
+    const doc = await fbDb.collection('progress').doc(currentUser.uid).get();
+    S = doc.exists ? (doc.data().state || {}) : {};
+  }catch(e){ S={}; }
+};
+
+const save = () => {
+  if(!currentUser) return;
+  // debounce 1.5s pour éviter trop d'écritures
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(async ()=>{
+    try{ await fbDb.collection('progress').doc(currentUser.uid).set({state: S, updatedAt: new Date().toISOString()}); }
+    catch(e){ console.warn('save failed',e); }
+  }, 1500);
+};
 const modStats=m=>{const all=flat(m);const dc=all.filter((_,i)=>S[kC(m.id,i)]).length;return{all,dc,pct:all.length?Math.round(dc/all.length*100):0,done:dc===all.length&&all.length>0};};
 const totals=()=>{let tot=0,done=0;DATA.forEach(m=>flat(m).forEach((_,i)=>{tot++;if(S[kC(m.id,i)])done++;}));return{tot,done,pct:tot?Math.round(done/tot*100):0};};
 
@@ -485,6 +584,90 @@ function ring(pct,r,sw,clr,sz){
 }
 
 let viewMode='grid',sheetMid=null,sheetFilt='all',searchQ='',searchFilt='all';
+
+
+/* ══════════════════════════════════════════
+   FIREBASE AUTH
+══════════════════════════════════════════ */
+
+function showAuthScreen(){
+  document.getElementById('auth-screen').classList.add('show');
+}
+
+function switchAuthTab(tab, el){
+  document.querySelectorAll('.atab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.auth-panel').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('auth-panel-'+tab).classList.add('active');
+  document.getElementById(tab==='login'?'login-msg':'reg-msg').textContent='';
+}
+
+async function authLogin(){
+  const u = document.getElementById('login-user').value.trim().toLowerCase();
+  const p = document.getElementById('login-pass').value;
+  const msg = document.getElementById('login-msg');
+  const btn = document.getElementById('login-btn');
+  if(!u||!p){msg.className='auth-msg err';msg.textContent='Remplissez tous les champs.';return;}
+  btn.disabled=true; msg.className='auth-msg'; msg.textContent='Connexion...';
+  try{
+    await fbAuth.signInWithEmailAndPassword(u, p);
+    // onAuthStateChanged prend le relais
+  }catch(e){
+    btn.disabled=false;
+    msg.className='auth-msg err';
+    const codes = {
+      'auth/user-not-found':'Email inconnu.',
+      'auth/wrong-password':'Mot de passe incorrect.',
+      'auth/invalid-email':'Email invalide.',
+      'auth/invalid-credential':'Email ou mot de passe incorrect.',
+      'auth/too-many-requests':'Trop de tentatives, réessayez plus tard.'
+    };
+    msg.textContent = codes[e.code] || ('Erreur : '+e.message);
+  }
+}
+
+async function authRegister(){
+  const u = document.getElementById('reg-user').value.trim().toLowerCase();
+  const p = document.getElementById('reg-pass').value;
+  const msg = document.getElementById('reg-msg');
+  const btn = document.getElementById('reg-btn');
+  if(!u||!p){msg.className='auth-msg err';msg.textContent='Remplissez tous les champs.';return;}
+  if(p.length<6){msg.className='auth-msg err';msg.textContent='Mot de passe trop court (min 6 caractères).';return;}
+  btn.disabled=true; msg.className='auth-msg'; msg.textContent='Création du compte...';
+  try{
+    await fbAuth.createUserWithEmailAndPassword(u, p);
+    // onAuthStateChanged prend le relais
+  }catch(e){
+    btn.disabled=false;
+    msg.className='auth-msg err';
+    const codes = {
+      'auth/email-already-in-use':'Cet email est déjà utilisé.',
+      'auth/invalid-email':'Email invalide.',
+      'auth/weak-password':'Mot de passe trop faible (min 6 caractères).'
+    };
+    msg.textContent = codes[e.code] || ('Erreur : '+e.message);
+  }
+}
+
+async function logout(){
+  if(!confirm('Se déconnecter ?')) return;
+  await fbAuth.signOut();
+  // onAuthStateChanged réinitialise tout
+  ['login-user','login-pass','reg-user','reg-pass'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.value='';
+  });
+  document.getElementById('login-msg').textContent='';
+  document.getElementById('reg-msg').textContent='';
+}
+
+async function showApp(){
+  await load();
+  document.getElementById('app-wrapper').style.display='block';
+  initTheme();
+  renderHome();
+  const titleEl = document.querySelector('.topbar-title');
+  if(titleEl && currentUser) titleEl.textContent = currentUser.email.split('@')[0];
+}
 
 function initTheme(){
   const saved=localStorage.getItem('res9_theme');
@@ -554,7 +737,7 @@ function renderProfile(){
     <div class="profile-row">
       <div class="profile-avatar">
         ${ring(pct,34,3,clr,80)}
-        <div class="profile-avatar-inner">R</div>
+        <div class="profile-avatar-inner">${currentUser?currentUser.username[0].toUpperCase():"R"}</div>
       </div>
       <div class="profile-stats">
         <div class="pstat"><span class="pstat-v">${done}</span><span class="pstat-l">faits</span></div>
@@ -795,16 +978,46 @@ function renderStats(){
     ${rows}`;
 }
 
-function confirmReset(){if(confirm('Réinitialiser toute la progression ?')){localStorage.removeItem('res9');S={};renderHome();}}
+function confirmReset(){if(confirm('Réinitialiser toute la progression ?')){
+  S={};
+  if(currentUser) fbDb.collection('progress').doc(currentUser.uid).set({state:{},updatedAt:new Date().toISOString()});
+  renderHome();
+}}
 
 let ty0=0;
 document.getElementById('sheet-drag').addEventListener('touchstart',e=>{ty0=e.touches[0].clientY;},{passive:true});
 document.getElementById('sheet-drag').addEventListener('touchend',e=>{if(e.changedTouches[0].clientY-ty0>55)closeSheet();},{passive:true});
 document.getElementById('search-inp').addEventListener('input',function(){searchQ=this.value;renderSearch();});
 
-initTheme();
-load();
-renderHome();
+// ══ FIREBASE INIT ══
+const firebaseConfig = {
+  apiKey: "AIzaSyBEyuDMi0zyjiuyCzLCV7vDe7W_NZkKKdo",
+  authDomain: "todo-ae29f.firebaseapp.com",
+  projectId: "todo-ae29f",
+  storageBucket: "todo-ae29f.firebasestorage.app",
+  messagingSenderId: "372927152021",
+  appId: "1:372927152021:web:075c632b6ae48c284dc09c"
+};
+firebase.initializeApp(firebaseConfig);
+fbAuth = firebase.auth();
+fbDb  = firebase.firestore();
+
+// Session persistante : onAuthStateChanged gère tout
+fbAuth.onAuthStateChanged(async user => {
+  document.getElementById('loading-screen').style.display = 'none';
+  if(user){
+    currentUser = user;
+    await load();
+    document.getElementById('auth-screen').classList.remove('show');
+    showApp();
+  } else {
+    currentUser = null;
+    S = {};
+    document.getElementById('app-wrapper').style.display = 'none';
+    showAuthScreen();
+  }
+});
 </script>
+</div><!-- /app-wrapper -->
 </body>
 </html>
