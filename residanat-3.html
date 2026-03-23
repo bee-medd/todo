@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Residanat 2025</title>
+<style>
+:root {
+  --bg:       #ffffff;
+  --bg2:      #fafafa;
+  --bg3:      #f5f5f5;
+  --line:     #dbdbdb;
+  --line2:    #efefef;
+  --text:     #000000;
+  --text2:    #737373;
+  --text3:    #a8a8a8;
+  --accent:   #0095f6;
+  --accent-l: #e8f4fd;
+  --green:    #1e9f5e;
+  --green-l:  #e6f7ef;
+  --purple:   #9333ea;
+  --font:     -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --max:      480px;
+  --nav:      44px;
+  --bot:      49px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html{background:#fafafa;overflow-x:hidden;}
+body{font-family:var(--font);background:var(--bg);color:var(--text);max-width:var(--max);margin:0 auto;min-height:100svh;-webkit-font-smoothing:antialiased;padding-bottom:calc(var(--bot) + env(safe-area-inset-bottom,0px));}
+button{font-family:inherit;cursor:pointer;border:none;background:none;}
+input,textarea{font-family:inherit;}
+
+/* TOP BAR */
+.topbar{position:sticky;top:0;z-index:500;background:rgba(255,255,255,.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--line);height:var(--nav);display:flex;align-items:center;justify-content:space-between;padding:0 16px;}
+.topbar-title{font-size:16px;font-weight:700;color:var(--text);letter-spacing:-.3px;}
+.icon-btn{width:32px;height:32px;display:flex;align-items:center;justify-content:center;color:var(--text);border-radius:50%;transition:background .12s;}
+.icon-btn:active{background:var(--bg3);}
+
+/* PAGES */
+.page{display:none;}
+.page.active{display:block;}
+
+/* PROFILE */
+.profile{padding:18px 16px 16px;border-bottom:1px solid var(--line);}
+.profile-row{display:flex;align-items:center;gap:24px;margin-bottom:14px;}
+.profile-avatar{width:80px;height:80px;border-radius:50%;flex-shrink:0;position:relative;}
+.profile-avatar svg{position:absolute;inset:0;width:100%;height:100%;transform:rotate(-90deg);}
+.profile-avatar-inner{position:absolute;inset:5px;border-radius:50%;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;color:var(--text2);}
+.profile-stats{display:flex;flex:1;}
+.pstat{flex:1;text-align:center;}
+.pstat-v{display:block;font-size:18px;font-weight:700;color:var(--text);line-height:1.2;}
+.pstat-l{display:block;font-size:12px;color:var(--text2);margin-top:1px;}
+.profile-name{font-size:14px;font-weight:700;color:var(--text);margin-bottom:2px;}
+.profile-bio{font-size:13px;color:var(--text2);margin-bottom:12px;}
+.pbar-track{height:3px;background:var(--line2);border-radius:99px;overflow:hidden;}
+.pbar-fill{height:100%;border-radius:99px;transition:width .7s cubic-bezier(.4,0,.2,1);}
+.pbar-label{display:flex;justify-content:space-between;margin-top:5px;}
+.pbar-label span{font-size:11px;color:var(--text2);}
+.pbar-label strong{font-size:11px;font-weight:600;color:var(--text);}
+
+/* VIEW TOGGLE */
+.view-bar{display:flex;border-bottom:1px solid var(--line);}
+.vtab{flex:1;height:44px;display:flex;align-items:center;justify-content:center;color:var(--text3);cursor:pointer;border-top:1.5px solid transparent;transition:color .15s,border-color .15s;}
+.vtab.active{color:var(--text);border-top-color:var(--text);}
+
+/* GRID */
+.mod-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line2);}
+.mgcell{background:var(--bg);aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;position:relative;padding:10px;gap:6px;transition:background .1s;}
+.mgcell:active{background:var(--bg2);}
+.mgcell-ring{position:relative;width:52px;height:52px;flex-shrink:0;}
+.mgcell-ring svg{position:absolute;inset:0;width:100%;height:100%;transform:rotate(-90deg);}
+.mgcell-inner{position:absolute;inset:6px;border-radius:50%;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--text2);letter-spacing:-.3px;}
+.mgcell-name{font-size:9.5px;font-weight:500;color:var(--text2);text-align:center;line-height:1.3;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;width:100%;}
+.mgcell-check{position:absolute;top:6px;right:6px;width:14px;height:14px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;}
+
+/* LIST */
+.mrow{display:flex;align-items:center;gap:12px;padding:10px 16px;border-bottom:1px solid var(--line2);cursor:pointer;transition:background .1s;}
+.mrow:active{background:var(--bg2);}
+.mrow-av{width:48px;height:48px;border-radius:50%;flex-shrink:0;position:relative;}
+.mrow-av svg{position:absolute;inset:0;width:100%;height:100%;transform:rotate(-90deg);}
+.mrow-av-inner{position:absolute;inset:5px;border-radius:50%;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--text2);}
+.mrow-info{flex:1;min-width:0;}
+.mrow-name{font-size:14px;font-weight:600;color:var(--text);margin-bottom:2px;}
+.mrow-sub{font-size:12px;color:var(--text2);}
+.mrow-right{text-align:right;flex-shrink:0;}
+.mrow-pct{font-size:14px;font-weight:600;color:var(--text);}
+.mrow-pct.done{color:var(--green);}
+.mrow-chev{color:var(--text3);margin-top:2px;}
+
+/* OVERLAY + SHEET */
+.overlay{position:fixed;inset:0;z-index:800;background:rgba(0,0,0,.4);opacity:0;pointer-events:none;transition:opacity .25s;}
+.overlay.show{opacity:1;pointer-events:all;}
+.sheet{position:fixed;bottom:0;left:50%;transform:translateX(-50%) translateY(100%);width:100%;max-width:var(--max);background:var(--bg);border-radius:12px 12px 0 0;max-height:92svh;display:flex;flex-direction:column;transition:transform .32s cubic-bezier(.32,0,.2,1);z-index:900;}
+.sheet.open{transform:translateX(-50%) translateY(0);}
+.sheet-drag{flex-shrink:0;padding:10px 0 0;cursor:grab;display:flex;justify-content:center;}
+.sheet-drag-bar{width:36px;height:4px;background:var(--line);border-radius:99px;}
+.sheet-hdr{display:flex;align-items:center;gap:12px;padding:10px 16px 12px;border-bottom:1px solid var(--line2);flex-shrink:0;}
+.sheet-av{width:44px;height:44px;border-radius:50%;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--text2);flex-shrink:0;}
+.sheet-hdr-info{flex:1;min-width:0;}
+.sheet-hdr-name{font-size:14px;font-weight:700;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.sheet-hdr-sub{font-size:12px;color:var(--text2);margin-top:1px;}
+.sheet-close{width:32px;height:32px;border-radius:50%;background:var(--bg3);display:flex;align-items:center;justify-content:center;color:var(--text);font-size:19px;font-weight:300;line-height:1;flex-shrink:0;}
+.sheet-actions{display:flex;gap:8px;padding:10px 16px;border-bottom:1px solid var(--line2);flex-shrink:0;}
+.sa-btn{flex:1;height:32px;border:1px solid var(--line);border-radius:8px;font-size:13px;font-weight:600;color:var(--text);transition:background .12s;}
+.sa-btn:active{background:var(--bg2);}
+.sheet-pills{display:flex;gap:6px;padding:10px 16px;border-bottom:1px solid var(--line2);flex-shrink:0;overflow-x:auto;scrollbar-width:none;}
+.sheet-pills::-webkit-scrollbar{display:none;}
+.spill{flex-shrink:0;padding:5px 14px;font-size:13px;font-weight:500;color:var(--text2);background:var(--bg3);border:none;border-radius:99px;cursor:pointer;transition:all .12s;}
+.spill.active{background:var(--text);color:var(--bg);}
+.sec-lbl{font-size:12px;font-weight:600;color:var(--text2);padding:10px 16px 4px;}
+.sheet-body{overflow-y:auto;flex:1;-webkit-overflow-scrolling:touch;}
+
+/* COURSE ROW */
+.crow{display:flex;align-items:flex-start;gap:12px;padding:10px 16px;border-bottom:1px solid var(--line2);}
+.cbox{width:22px;height:22px;border-radius:50%;border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;margin-top:1px;transition:all .15s;background:var(--bg);}
+.cbox:active{transform:scale(.82);}
+.crow.cdone .cbox{background:var(--green);border-color:var(--green);}
+.cchk{display:none;}
+.crow.cdone .cchk{display:block;}
+.cinfo{flex:1;min-width:0;}
+.cname{font-size:14px;font-weight:400;color:var(--text);line-height:1.4;cursor:pointer;padding-bottom:7px;}
+.crow.cdone .cname{color:var(--text3);text-decoration:line-through;}
+.cbadges{display:flex;flex-wrap:wrap;gap:4px;}
+.note-btn{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--text3);flex-shrink:0;transition:all .12s;}
+.note-btn:active{background:var(--bg3);}
+.crow.has-note .note-btn{color:var(--accent);}
+.crow-notes{display:none;padding:0 16px 10px 50px;}
+.crow.note-open .crow-notes{display:block;}
+.notes-ta{width:100%;background:var(--bg3);border:1px solid var(--line2);border-radius:8px;padding:9px 11px;color:var(--text);font-size:13px;outline:none;resize:vertical;min-height:60px;line-height:1.5;transition:border-color .15s;}
+.notes-ta:focus{border-color:var(--accent);}
+.notes-ta::placeholder{color:var(--text3);}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;gap:4px;background:var(--bg3);border:1px solid var(--line2);border-radius:6px;padding:3px 7px;cursor:pointer;transition:all .12s;user-select:none;}
+.badge:active{transform:scale(.92);}
+.badge:hover{border-color:var(--accent);background:var(--accent-l);}
+.badge-lbl{font-size:10px;font-weight:600;color:var(--text2);letter-spacing:.2px;transition:color .12s;}
+.badge:hover .badge-lbl{color:var(--accent);}
+.bdots{display:flex;gap:2.5px;align-items:center;}
+.bdot{width:4px;height:4px;border-radius:50%;background:var(--line);transition:background .15s;}
+.bdot.on{background:var(--accent);}
+.badge.bfull{background:var(--green-l);border-color:rgba(30,159,94,.3);}
+.badge.bfull .badge-lbl{color:var(--green);}
+.badge.bfull .bdot.on{background:var(--green);}
+.badge.rev .bdot.on{background:var(--purple);}
+.badge.rev:hover{border-color:var(--purple);background:#f5f0ff;}
+.badge.rev:hover .badge-lbl{color:var(--purple);}
+.badge.rev.bfull{background:var(--green-l);border-color:rgba(30,159,94,.3);}
+.badge.rev.bfull .badge-lbl{color:var(--green);}
+.badge.rev.bfull .bdot.on{background:var(--green);}
+
+/* SEARCH PAGE */
+.search-pg{padding:8px 16px 0;}
+.search-wrap{position:relative;margin-bottom:12px;}
+.search-wrap svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text3);pointer-events:none;}
+.search-inp{width:100%;height:36px;background:var(--bg3);border:none;border-radius:10px;padding:0 14px 0 38px;font-size:14px;color:var(--text);outline:none;}
+.search-inp:focus{background:var(--line2);}
+.search-inp::placeholder{color:var(--text3);}
+.sf-row{display:flex;gap:6px;margin-bottom:12px;overflow-x:auto;scrollbar-width:none;}
+.sf-row::-webkit-scrollbar{display:none;}
+.sfpill{flex-shrink:0;padding:5px 14px;font-size:13px;font-weight:500;color:var(--text2);background:var(--bg3);border:none;border-radius:99px;cursor:pointer;transition:all .12s;}
+.sfpill.active{background:var(--text);color:var(--bg);}
+.sres-block{border-bottom:1px solid var(--line2);margin-bottom:6px;}
+.sres-hdr{display:flex;align-items:center;gap:10px;padding:10px 0;cursor:pointer;}
+.sres-hdr-av{width:32px;height:32px;border-radius:50%;background:var(--bg3);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--text2);}
+.sres-hdr-name{flex:1;font-size:13px;font-weight:700;color:var(--text);}
+.sres-count{font-size:12px;color:var(--text2);}
+
+/* STATS PAGE */
+.stats-profile{padding:18px 16px 16px;border-bottom:1px solid var(--line);}
+.stats-top{display:flex;align-items:center;gap:20px;margin-bottom:14px;}
+.stats-av{width:72px;height:72px;border-radius:50%;flex-shrink:0;position:relative;}
+.stats-av svg{position:absolute;inset:0;width:100%;height:100%;transform:rotate(-90deg);}
+.stats-av-inner{position:absolute;inset:6px;border-radius:50%;background:var(--bg3);display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.stats-pct{font-size:17px;font-weight:700;color:var(--text);line-height:1;}
+.stats-pct-l{font-size:9px;color:var(--text2);margin-top:1px;}
+.stats-meta{flex:1;}
+.stats-mname{font-size:15px;font-weight:700;color:var(--text);margin-bottom:10px;}
+.stats-mnums{display:flex;}
+.smnum{flex:1;text-align:center;}
+.smnum+.smnum{border-left:1px solid var(--line2);}
+.smnum-v{display:block;font-size:16px;font-weight:700;color:var(--text);line-height:1.2;}
+.smnum-l{display:block;font-size:11px;color:var(--text2);margin-top:1px;}
+.stats-kpis{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line2);border-bottom:1px solid var(--line2);}
+.skpi{background:var(--bg);padding:16px;}
+.skpi.wide{grid-column:1/-1;}
+.skpi-v{font-size:22px;font-weight:700;color:var(--text);line-height:1;margin-bottom:3px;}
+.skpi-v .sub{font-size:14px;font-weight:400;color:var(--text2);}
+.skpi-v.blue{color:var(--accent);}
+.skpi-v.green{color:var(--green);}
+.skpi-l{font-size:12px;color:var(--text2);margin-bottom:8px;}
+.skpi-bar{height:2px;background:var(--line2);border-radius:99px;overflow:hidden;}
+.skpi-bar-f{height:100%;border-radius:99px;transition:width .7s;}
+.stats-sec-lbl{font-size:12px;font-weight:700;color:var(--text2);padding:14px 16px 6px;border-bottom:1px solid var(--line2);}
+.smod-item{display:flex;align-items:center;gap:12px;padding:10px 16px;border-bottom:1px solid var(--line2);cursor:pointer;transition:background .1s;}
+.smod-item:active{background:var(--bg2);}
+.smod-av{width:40px;height:40px;border-radius:50%;flex-shrink:0;position:relative;}
+.smod-av svg{position:absolute;inset:0;width:100%;height:100%;transform:rotate(-90deg);}
+.smod-av-inner{position:absolute;inset:4px;border-radius:50%;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--text2);}
+.smod-info{flex:1;min-width:0;}
+.smod-name{font-size:13px;font-weight:600;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-bottom:3px;}
+.smod-bar{height:2px;background:var(--line2);border-radius:99px;overflow:hidden;}
+.smod-bar-f{height:100%;border-radius:99px;background:var(--accent);}
+.smod-bar-f.done{background:var(--green);}
+.smod-nums{display:flex;gap:12px;flex-shrink:0;}
+.smod-num{text-align:right;}
+.smod-num-v{font-size:12px;font-weight:600;color:var(--text2);line-height:1;}
+.smod-num-v.blue{color:var(--accent);}
+.smod-num-v.green{color:var(--green);}
+.smod-num-l{font-size:9px;color:var(--text3);margin-top:2px;}
+
+/* DUA */
+.dua-pg{padding:16px;}
+.dua-card{border:1px solid var(--line2);border-radius:12px;overflow:hidden;}
+.dua-top{padding:20px 18px 16px;background:var(--bg);}
+.dua-lbl{font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.8px;margin-bottom:18px;}
+.dua-arabic{font-size:19px;line-height:2.1;color:var(--text);text-align:right;direction:rtl;font-family:'Amiri','Traditional Arabic',serif;margin-bottom:16px;}
+.dua-bottom{background:var(--bg2);border-top:1px solid var(--line2);padding:16px 18px;}
+.dua-trans{font-size:13px;line-height:1.7;color:var(--text2);margin-bottom:12px;}
+.dua-amin{text-align:right;direction:rtl;font-family:'Amiri',serif;font-size:17px;color:var(--accent);}
+
+/* BOTTOM NAV */
+.botnav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:var(--max);z-index:600;background:rgba(255,255,255,.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid var(--line);height:calc(var(--bot) + env(safe-area-inset-bottom,0px));display:flex;align-items:flex-start;}
+.bnav{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;height:var(--bot);gap:2px;cursor:pointer;transition:opacity .1s;}
+.bnav:active{opacity:.4;}
+.bnav svg{display:block;color:var(--text3);transition:color .12s;}
+.bnav span{font-size:9.5px;font-weight:500;color:var(--text3);letter-spacing:.1px;transition:color .12s;}
+.bnav.active svg,.bnav.active span{color:var(--text);}
+
+/* QUALITY BADGE */
+.qbadge{display:inline-flex;align-items:center;gap:3px;background:var(--bg3);border:1px solid var(--line2);border-radius:6px;padding:3px 7px;cursor:pointer;transition:all .12s;user-select:none;}
+.qbadge:active{transform:scale(.92);}
+.qbadge:hover{border-color:#f59e0b;background:#fffbeb;}
+.qstar{font-size:10px;color:var(--line);transition:color .15s;line-height:1;}
+.qstar.on{color:#f59e0b;}
+.qbadge-lbl{font-size:10px;font-weight:600;color:var(--text2);letter-spacing:.2px;transition:color .12s;}
+.qbadge:hover .qbadge-lbl{color:#f59e0b;}
+.qbadge.qmax{background:#fffbeb;border-color:rgba(245,158,11,.35);}
+.qbadge.qmax .qbadge-lbl{color:#f59e0b;}
+
+/* LEVEL PILL */
+.lvl-pill{display:inline-flex;align-items:center;gap:4px;border-radius:6px;padding:3px 8px;cursor:pointer;transition:all .12s;user-select:none;border:1px solid var(--line2);background:var(--bg3);}
+.lvl-pill:active{transform:scale(.92);}
+.lvl-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.lvl-lbl{font-size:10px;font-weight:600;letter-spacing:.2px;}
+.lvl-pill.lvl0{color:var(--text3);}
+.lvl-pill.lvl0 .lvl-lbl{color:var(--text3);}
+.lvl-pill.lvl0 .lvl-dot{background:var(--text3);}
+.lvl-pill.lvl1{background:#f0fdf4;border-color:rgba(22,163,74,.3);}
+.lvl-pill.lvl1 .lvl-lbl{color:#16a34a;}
+.lvl-pill.lvl1 .lvl-dot{background:#16a34a;}
+.lvl-pill.lvl2{background:#fff7ed;border-color:rgba(234,88,12,.3);}
+.lvl-pill.lvl2 .lvl-lbl{color:#ea580c;}
+.lvl-pill.lvl2 .lvl-dot{background:#ea580c;}
+.lvl-pill.lvl3{background:#fef2f2;border-color:rgba(220,38,38,.3);}
+.lvl-pill.lvl3 .lvl-lbl{color:#dc2626;}
+.lvl-pill.lvl3 .lvl-dot{background:#dc2626;}
+
+/* MISC */
+.empty{text-align:center;padding:48px 20px;font-size:14px;color:var(--text2);}
+</style>
+</head>
+<body>
+
+<nav class="topbar">
+  <span class="topbar-title">Residanat 2025</span>
+  <button class="icon-btn" onclick="confirmReset()">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.12"/></svg>
+  </button>
+</nav>
+
+<div id="page-home" class="page active">
+  <div class="profile" id="home-profile"></div>
+  <div class="view-bar">
+    <div class="vtab active" id="vtab-grid" onclick="setView('grid',this)">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="7" height="7" rx=".5"/><rect x="14" y="3" width="7" height="7" rx=".5"/><rect x="3" y="14" width="7" height="7" rx=".5"/><rect x="14" y="14" width="7" height="7" rx=".5"/></svg>
+    </div>
+    <div class="vtab" id="vtab-list" onclick="setView('list',this)">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+    </div>
+  </div>
+  <div id="mod-area"></div>
+</div>
+
+<div id="page-search" class="page">
+  <div class="search-pg">
+    <div class="search-wrap">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input class="search-inp" id="search-inp" type="search" placeholder="Rechercher..." autocomplete="off" spellcheck="false">
+    </div>
+    <div class="sf-row">
+      <button class="sfpill active" onclick="setSF('all',this)">Tous</button>
+      <button class="sfpill" onclick="setSF('todo',this)">À faire</button>
+      <button class="sfpill" onclick="setSF('done',this)">Terminés</button>
+      <button class="sfpill" onclick="setSF('facile',this)">Facile</button>
+      <button class="sfpill" onclick="setSF('moyen',this)">Moyen</button>
+      <button class="sfpill" onclick="setSF('difficile',this)">Difficile</button>
+      <button class="sfpill" onclick="setSF('hq',this)">⭐ Qualité max</button>
+    </div>
+    <div id="search-res"></div>
+  </div>
+</div>
+
+<div id="page-stats" class="page">
+  <div id="stats-pg"></div>
+</div>
+
+<div id="page-dua" class="page">
+  <div class="dua-pg">
+    <div class="dua-card">
+      <div class="dua-top">
+        <div class="dua-lbl">Doaa pour le développeur</div>
+        <div class="dua-arabic">اللَّهُمَّ اغْفِرْ لِمَنْ صَنَعَ هَذَا التَّطْبِيقَ،<br>وَكَفِّرْ عَنْهُ ذُنُوبَهُ وَسَيِّئَاتِهِ،<br>وَاجْعَلْ عَمَلَهُ هَذَا فِي مِيزَانِ حَسَنَاتِهِ،<br>يَوْمَ لَا يَنْفَعُ مَالٌ وَلَا بَنُونَ إِلَّا مَنْ أَتَى اللَّهَ بِقَلْبٍ سَلِيمٍ</div>
+      </div>
+      <div class="dua-bottom">
+        <div class="dua-trans">O Allah, pardonne à celui qui a créé cette application, efface ses fautes et ses péchés, et place cette œuvre dans la balance de ses bonnes actions, au Jour où ni richesse ni enfants ne seront utiles — sauf celui qui vient à Allah avec un cœur sain.</div>
+        <div class="dua-amin">آمِينَ يَا رَبَّ الْعَالَمِينَ</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="overlay" onclick="closeSheet()"></div>
+<div class="sheet" id="sheet">
+  <div class="sheet-drag" id="sheet-drag"><div class="sheet-drag-bar"></div></div>
+  <div class="sheet-hdr" id="sheet-hdr"></div>
+  <div class="sheet-actions" id="sheet-actions"></div>
+  <div class="sheet-pills">
+    <button class="spill active" onclick="setSheetF('all',this)">Tous</button>
+    <button class="spill" onclick="setSheetF('todo',this)">À faire</button>
+    <button class="spill" onclick="setSheetF('done',this)">Faits</button>
+  </div>
+  <div class="sheet-body" id="sheet-body"></div>
+</div>
+
+<nav class="botnav">
+  <div class="bnav active" id="bnav-home" onclick="showPage('home',this)">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9L12 2l9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    <span>Accueil</span>
+  </div>
+  <div class="bnav" id="bnav-search" onclick="showPage('search',this)">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <span>Recherche</span>
+  </div>
+  <div class="bnav" id="bnav-stats" onclick="showPage('stats',this)">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+    <span>Stats</span>
+  </div>
+  <div class="bnav" id="bnav-dua" onclick="showPage('dua',this)">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z"/></svg>
+    <span>Doaa</span>
+  </div>
+</nav>
+
+<script>
+const MAX=5;
+const QT={cycle:'Cycle',resid:'Résidanat',myqcm:'MyQCM',pharma:'Pharma'};
+const DATA=[
+  {id:'anapath',name:'Anatomie Pathologique',qcm:['cycle','resid'],courses:['Processus inflammatoire','Generalites sur les tumeurs','Progression du KC','Tissu Cancereux','Tumeurs Benignes','Tmr epitheliale Malpighienne','Tmr epitheliales glandulaires','Tmr mesenchymateuse','Lymphome','Tumeurs Nerveuses','Tumeurs Melanocytaires','Tumeurs Embryonnaires','Pathologies vasculaires','Atherosclerose','Embolie','Ischemie et Infarctus','Thrombose','Vascularites']},
+  {id:'genetique',name:'Genetique',qcm:['cycle','resid'],courses:['Acide nucleique','Chromatine','Genes','Replication de l\'ADN','Transcription de l\'ADN','Traduction ARN','Caryotype et anomalies']},
+  {id:'immunologie',name:'Immunologie',qcm:['myqcm','resid','cycle'],courses:['Organes et tissus lymphoides','CMH','Systeme de complement','Antigene','Immunoglobuline','Cellules Immunites','Reponses immunitaires','Maladies autoimmunes','Hypersensibilite','Immunite anti-infectieuse','Immunite anti-tumorale','Deficits Immunitaires']},
+  {id:'biochimie',name:'Biochimie',qcm:['resid','cycle','pharma'],courses:['Anomalies electrolytiques','Exploration des lipides','Fonction renale','Fonction hepatique','Remodelage osseux','Explorations digestives','Liquide de ponction','Metabolisme du fer','Equilibre acido-basique','Metabolisme des glucides','Exploration des proteines','Exploration de l\'inflammation','Exploration Cardiaque','Exploration LCR','Glycolyse','Neoglycogenese','Enzymes','Metabolisme du glycogene','Metabolisme protidique']},
+  {id:'cytologie',name:'Cytologie',qcm:['cycle','resid'],courses:['Noyau et cycle cellulaire']},
+  {id:'physio',name:'Physiologie',qcm:['cycle','resid','myqcm'],sections:[
+    {lbl:'Bases',courses:['Thermoregulation','Compartiments liquidiens','Membrane plasmique','Ligand-recepteur','Biooenergetique','Transmission Synaptique','Physiologie du muscle','SNA']},
+    {lbl:'Cardiaque',courses:['Circulation Coronaire','Regulation PA','Debit cardiaque','Cycle cardiaque','Electrophysiologie cardiaque']},
+    {lbl:'Digestive',courses:['Phase Buccale','Phase Gastrique','Phase duodenale','Phase intestinale','Phase colique']},
+    {lbl:'Hemato',courses:['Physiologie de l\'hemostase','Hemolyse','Hemogramme']},
+    {lbl:'Endocrinienne',courses:['Metabolisme Phospho-calcique','Pancreas endocrine','Gonades','Glandes surrenales','Thyroide','Axe hypothalamo-hypophysaire']},
+    {lbl:'Neurophysiologie',courses:['Racine Rachidienne','Somesthesie et douleur','Electrogenes corticales','Physiologie des reflexes','Neurone']},
+    {lbl:'Renale',courses:['Morphologie Renale','Circulation renale','Filtration glomerulaire','Acidification des Urines','Fonction tubulaire','Concentration/dilution urines']},
+    {lbl:'Respiratoire',courses:['Regulation respiratoire','Fonction respiratoire du sang','Rapport V/P','Echanges alveolo-capillaires','EFR','Mecanique ventilatoire']}
+  ]},
+  {id:'neurochir',name:'Neurochirurgie',qcm:['cycle','resid','myqcm'],courses:['Lombosciatique hernie discale','Hemorragie meningee','CML','HIC','Trauma cranien']},
+  {id:'urologie',name:'Urologie',qcm:['cycle','resid','myqcm'],courses:['HBP','Lithiase Urinaire','Hematurie','Retention Urinaire Aigue','Cancer de la Vessie','Cancer de la Prostate']},
+  {id:'ortho',name:'Orthopedie',qcm:['cycle','resid'],courses:['Traumatisme Vertebro-medullaire','Fracture ES Femur','LCH','Luxation hanche','Traumatisme osseux du genou','Traumatisme Ligamentaire du genou','Fracture rotule','Tumeurs osseuses','Fracture ouverte jambe','Infection osteo-articulaire','Mal de Pott + Arthrite TBC','Traumatisme epaule','Fracture ES Humerus','Syndrome des loges','Panaris Phlegmon','Fractures enfant']},
+  {id:'gyneco',name:'Gynecologie',qcm:['cycle','resid','myqcm'],courses:['Delivrance','GEU','Placenta previa','Hematome retro-placentaire','Rupture Uterine','Avortement spontane','Avortement provoque','Cancer col utetus','Cancer endometre','Fibromes Uterins','Kystes et Cancer Ovaire','Cancer du sein','Grossesse et infections','Salpingites','Leucorrhees','IST','Trouble cycle menstruel','Hemorragie genitale','TBC genitale']},
+  {id:'hge',name:'Hepato-Gastro-Enterologie',qcm:['cycle','resid','myqcm'],courses:['Icteres chirurgicaux','Cholecystite Aigue','Lithiase voie biliaire','Lithiase vesiculaire','UGD','Complications UGD','Hernie Hiatale','Cirrhose et complications','Hepatites Chroniques','Kyste Hydatique foie','Abces du foie','Hemorragies digestives','Polype et polypose','Infarctus Entero-mesenterique','Occlusion intestinale Aigue','Appendicite','Cancer voies biliaires','Cancer du foie','Cancer rectum','Cancer colon','Cancer Pancreas exocrine','Cancer estomac','Cancer oesophage','Pancreatite chronique','Pseudo-kyste pancreas','Pancreatite aigue','CAT ascite','Hernie Parietale','Traumatismes Abdominaux','Peritonite Aigue']},
+  {id:'urgences',name:'Urgences et Chirurgie',qcm:['cycle','resid'],courses:['Generalites en chirurgie','Brulure','Polytraumatisme']},
+  {id:'travail',name:'Medecine du Travail',qcm:['cycle','resid'],courses:['Saturnisme']},
+  {id:'rhumato',name:'Rhumatologie',qcm:['cycle','resid'],courses:['Lombosciatique','Polyarthrite rhumatoide']},
+  {id:'neuro',name:'Neurologie',qcm:['cycle','resid'],courses:['Syndromes en neurologie','Polyneuropathie Acquise','Myasthenie','PRNA','Cephalee et Algie','Epilepsie — Semiologie','Epilepsie — Syndromes','Epilepsie — Etats de mal','SLA','Maladie de Parkinson','Sclerose en Plaques']},
+  {id:'nephro',name:'Nephrologie',qcm:['cycle','resid'],courses:['Nephropathie Glomerulaire','Syndrome Nephritique','Syndrome Nephrotique','IRA','IRC']},
+  {id:'cardio',name:'Cardiologie',qcm:['cycle','resid'],courses:['RAA','Troubles du rythme','HTA','Insuffisance Cardiaque','Definition IDM','STEMI','NSTEMI','Insuffisance Aortique','Insuffisance Mitrale','Retrecissement aortique','Retrecissement mitral','Pericardite','Troubles de la conduction','Endocardite infectieuse']},
+  {id:'dermato',name:'Dermatologie',qcm:['cycle','resid'],courses:['Eczema','Psoriasis','IST','Urticaire']},
+  {id:'epidemio',name:'Epidemiologie',qcm:['cycle','resid'],courses:['Maladies transmissibles','Indicateurs de sante','Urgences epidemiologiques','PEV','Etudes cohorte et Cas-temoins']},
+  {id:'infectieux',name:'Infectieux',qcm:['cycle','resid'],courses:['Paludisme','Poliomyelite Aigue','Zona','Fievre Typhoide','Cholera','Sepsis a BGN','CAT sepsis grave','Hepatites Virales ABCDE','Meningite','Leishmaniose viscerale','Amibiase','VIH']},
+  {id:'ophtalmo',name:'Ophtalmologie',qcm:['cycle','resid'],courses:['Oeil Rouge','Trachome','Glaucome','Oeil et maladies generales']},
+  {id:'orl',name:'ORL',qcm:['cycle','resid'],courses:['Angines et complications','Otites (OMA, OMCC, OEA)','Vertiges','Epistaxis','ADP cervicales','Cancer du Cavum']},
+  {id:'pediatrie',name:'Pediatrie',qcm:['cycle','resid'],courses:['Rachitisme','Deshydratation Aigue','Diarrhee Aigue','Diarrhee Chronique','Malnutrition','Vaccination','Ictere neonatal','RAA','Arthrite juvenile','Tuberculose enfant','Asthme enfant','Rougeole','Meningite','Leishmaniose','Anemie carentielle','Anemie hemolytique','Anemie neonatale','Syndrome nephrotique','GNA','Diabete enfant','Hypothyroidie','Hyperthyroidie']},
+  {id:'medlegale',name:'Medecine Legale',qcm:['cycle','resid'],courses:['Diagnostic de la mort','Responsabilite civile et penale','Certificats medicaux','Secret medical','Requisition']},
+  {id:'hemato',name:'Hematologie',qcm:['cycle','resid'],courses:['Anemie Carentielle','Anemie Hemolytique','Aplasie Medullaire','Purpura','Syndromes Myeloproliferatifs','Syndromes Lymphoproliferatifs','Leucemies Aigues','Lymphome','Myelome Multiple','Groupe Sanguin et transfusion','CAT splenomegalie','Coagulopathies Acquises','Coagulopathies Congenitales']},
+  {id:'psychiatrie',name:'Psychiatrie',qcm:['cycle','resid'],courses:['Troubles Anxieux','Personnalites pathologiques','Schizophrenies','Delire Chronique','Trouble Bipolaire','Psychotropes','Bouffee delirante','Confusion mentale','CAT dangerosite','CAT etat suicidaire','CAT agitation']},
+  {id:'endocrino',name:'Endocrinologie',qcm:['cycle','resid'],courses:['Gynaecomastie','Hirsutisme','Nodule thyroidien','Cancer thyroidien','Hypothyroidie','Hyperthyroidie','Hypoparathyroidie','Hyperparathyroidie','Syndrome de Cushing','Insuffisance surrenalienne','Diabete insipide','Retard de Croissance','Acromegalie','Insuffisance antehypophysaire','Pied diabetique','Traitement DT2','Insulinotherapie','Complications chroniques DT','Complications aigues DT','Classification du diabete']},
+  {id:'pneumo',name:'Pneumologie',qcm:['cycle','resid'],courses:['Tuberculose','Pleuresie liquide clair','Pleuresie purulente','Pleuresie hemorragique','Pneumothorax','Asthme bronchique','BPCO','Emphyseme','IRC']},
+  {id:'geriatrie',name:'Geriatrie',qcm:['cycle','resid'],courses:['QCMs a refaire']},
+  {id:'systeme',name:'Maladies du Systeme',qcm:['cycle'],courses:['LES','SAPL','Maladie de Behcet','Vascularites systemiques','Syndrome de Sjogren','Amyloses','Acrosyndrome','Thrombophilie','Fievre prolongee','Therapeutiques','Maladies auto-immunes enfant']}
+];
+
+const flat=m=>m.sections?m.sections.flatMap(s=>s.courses):(m.courses||[]);
+const abbr=name=>{
+  const skip=new Set(['de','du','des','et','le','la','les','en','au','aux','un','une']);
+  const w=name.split(/[\s\-\/]+/).filter(x=>x.length>1&&!skip.has(x.toLowerCase()));
+  if(!w.length) return name.slice(0,2).toUpperCase();
+  if(w.length===1) return w[0].slice(0,3).toUpperCase();
+  if(w.length===2) return (w[0][0]+w[1][0]).toUpperCase();
+  return (w[0][0]+w[1][0]+w[2][0]).toUpperCase();
+};
+const kC=(m,i)=>`c_${m}_${i}`;
+const kQ=(m,i,qt)=>`q_${m}_${i}_${qt}`;
+const kR=(m,i)=>`r_${m}_${i}`;
+const kN=(m,i)=>`n_${m}_${i}`;
+const kX=(m,i)=>`x_${m}_${i}`;
+const kQl=(m,i)=>`ql_${m}_${i}`;
+const kLv=(m,i)=>`lv_${m}_${i}`;
+const MAXQ=3;
+const LVL_DATA=[
+  {lbl:'—',cls:'lvl0'},
+  {lbl:'Facile',cls:'lvl1'},
+  {lbl:'Moyen',cls:'lvl2'},
+  {lbl:'Difficile',cls:'lvl3'}
+];
+let S={};
+const load=()=>{try{S=JSON.parse(localStorage.getItem('res9')||'{}');}catch(e){S={};}};
+const save=()=>{localStorage.setItem('res9',JSON.stringify(S));};
+const modStats=m=>{const all=flat(m);const dc=all.filter((_,i)=>S[kC(m.id,i)]).length;return{all,dc,pct:all.length?Math.round(dc/all.length*100):0,done:dc===all.length&&all.length>0};};
+const totals=()=>{let tot=0,done=0;DATA.forEach(m=>flat(m).forEach((_,i)=>{tot++;if(S[kC(m.id,i)])done++;}));return{tot,done,pct:tot?Math.round(done/tot*100):0};};
+
+function ring(pct,r,sw,clr,sz){
+  const C=2*Math.PI*r,d=(pct/100*C).toFixed(2);
+  return `<svg width="${sz}" height="${sz}" viewBox="0 0 ${sz} ${sz}"><circle cx="${sz/2}" cy="${sz/2}" r="${r}" fill="none" stroke="#efefef" stroke-width="${sw}"/><circle cx="${sz/2}" cy="${sz/2}" r="${r}" fill="none" stroke="${clr}" stroke-width="${sw}" stroke-linecap="round" stroke-dasharray="${d} ${C.toFixed(2)}"/></svg>`;
+}
+
+let viewMode='grid',sheetMid=null,sheetFilt='all',searchQ='',searchFilt='all';
+
+function showPage(id,btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.bnav').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  btn.classList.add('active');
+  if(id==='stats') renderStats();
+  if(id==='search'){renderSearch();setTimeout(()=>document.getElementById('search-inp').focus(),80);}
+}
+function setView(v,el){
+  viewMode=v;
+  document.querySelectorAll('.vtab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  renderModArea();
+}
+function renderProfile(){
+  const{tot,done,pct}=totals();
+  const mDone=DATA.filter(m=>{const{dc,all}=modStats(m);return dc===all.length&&all.length>0;}).length;
+  const clr=pct===100?'var(--green)':'var(--accent)';
+  document.getElementById('home-profile').innerHTML=`
+    <div class="profile-row">
+      <div class="profile-avatar">
+        ${ring(pct,34,3,clr,80)}
+        <div class="profile-avatar-inner">R</div>
+      </div>
+      <div class="profile-stats">
+        <div class="pstat"><span class="pstat-v">${done}</span><span class="pstat-l">faits</span></div>
+        <div class="pstat"><span class="pstat-v">${tot}</span><span class="pstat-l">total</span></div>
+        <div class="pstat"><span class="pstat-v">${mDone}</span><span class="pstat-l">modules</span></div>
+      </div>
+    </div>
+    <div class="profile-name">Residanat 2025</div>
+    <div class="profile-bio">Concours National de Résidanat</div>
+    <div class="pbar-track"><div class="pbar-fill" style="width:${pct}%;background:${clr}"></div></div>
+    <div class="pbar-label"><span>Progression générale</span><strong>${pct}%</strong></div>`;
+}
+function renderModGrid(){
+  let h='';
+  DATA.forEach(m=>{
+    const{dc,all,pct,done}=modStats(m);
+    const clr=done?'var(--green)':'var(--accent)';
+    h+=`<div class="mgcell" onclick="openSheet('${m.id}')">
+      <div class="mgcell-ring">${ring(pct,20,2.5,clr,52)}<div class="mgcell-inner">${abbr(m.name)}</div></div>
+      <div class="mgcell-name">${m.name}</div>
+      ${done?`<div class="mgcell-check"><svg width="8" height="7" viewBox="0 0 10 8" fill="none"><polyline points="1,4 3.5,6.5 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>`:''}
+    </div>`;
+  });
+  return `<div class="mod-grid">${h}</div>`;
+}
+function renderModList(){
+  let h='';
+  DATA.forEach(m=>{
+    const{dc,all,pct,done}=modStats(m);
+    const clr=done?'var(--green)':'var(--accent)';
+    h+=`<div class="mrow" onclick="openSheet('${m.id}')">
+      <div class="mrow-av">${ring(pct,17,2.5,clr,40)}<div class="mrow-av-inner">${abbr(m.name)}</div></div>
+      <div class="mrow-info"><div class="mrow-name">${m.name}</div><div class="mrow-sub">${dc} / ${all.length} terminés</div></div>
+      <div class="mrow-right">
+        <div class="mrow-pct${done?' done':''}">${pct}%</div>
+        <svg class="mrow-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+    </div>`;
+  });
+  return `<div>${h}</div>`;
+}
+function renderModArea(){document.getElementById('mod-area').innerHTML=viewMode==='grid'?renderModGrid():renderModList();}
+function renderHome(){renderProfile();renderModArea();}
+
+function openSheet(mid){
+  sheetMid=mid;sheetFilt='all';
+  document.querySelectorAll('.spill').forEach((t,i)=>t.classList.toggle('active',i===0));
+  renderSheetHdr();renderSheetBody();
+  document.getElementById('overlay').classList.add('show');
+  document.getElementById('sheet').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeSheet(){
+  document.getElementById('overlay').classList.remove('show');
+  document.getElementById('sheet').classList.remove('open');
+  document.body.style.overflow='';sheetMid=null;
+}
+function setSheetF(f,el){
+  sheetFilt=f;
+  document.querySelectorAll('.spill').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');renderSheetBody();
+}
+function renderSheetHdr(){
+  const m=DATA.find(d=>d.id===sheetMid);const{dc,all}=modStats(m);
+  document.getElementById('sheet-hdr').innerHTML=`
+    <div class="sheet-av">${abbr(m.name)}</div>
+    <div class="sheet-hdr-info"><div class="sheet-hdr-name">${m.name}</div><div class="sheet-hdr-sub">${dc} / ${all.length} cours terminés</div></div>
+    <button class="sheet-close" onclick="closeSheet()">×</button>`;
+  document.getElementById('sheet-actions').innerHTML=`
+    <button class="sa-btn" onclick="selAll('${m.id}',true)">Tout cocher</button>
+    <button class="sa-btn" onclick="selAll('${m.id}',false)">Tout décocher</button>`;
+}
+function renderSheetBody(){
+  const m=DATA.find(d=>d.id===sheetMid);if(!m) return;
+  let h='';
+  if(m.sections){
+    let gi=0;
+    m.sections.forEach(sec=>{
+      const rows=sec.courses.map((c,li)=>{const i=gi+li,done=!!S[kC(m.id,i)];if(sheetFilt==='done'&&!done) return '';if(sheetFilt==='todo'&&done) return '';return courseRow(m,i,c);}).join('');
+      if(rows.replace(/\s/g,'')) h+=`<div class="sec-lbl">${sec.lbl}</div>${rows}`;
+      gi+=sec.courses.length;
+    });
+  } else {
+    flat(m).forEach((c,i)=>{const done=!!S[kC(m.id,i)];if(sheetFilt==='done'&&!done) return;if(sheetFilt==='todo'&&done) return;h+=courseRow(m,i,c);});
+  }
+  document.getElementById('sheet-body').innerHTML=h||`<div class="empty">Aucun cours ici.</div>`;
+}
+function courseRow(m,i,name){
+  const done=!!S[kC(m.id,i)];
+  const hasNote=!!(S[kN(m.id,i)]||'').trim();
+  const noteOpen=!!S[kX(m.id,i)];
+  const noteVal=(S[kN(m.id,i)]||'').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+  // QCM badges
+  let bdg=m.qcm.map(qt=>{
+    const n=S[kQ(m.id,i,qt)]||0,full=n===MAX;
+    let dots='';for(let d=0;d<MAX;d++) dots+=`<span class="bdot${d<n?' on':''}"></span>`;
+    return `<span class="badge${full?' bfull':''}" onclick="togQ(event,'${m.id}',${i},'${qt}')"><span class="badge-lbl">${QT[qt]}</span><span class="bdots">${dots}</span></span>`;
+  }).join('');
+  // Revision badge
+  const rv=S[kR(m.id,i)]||0,rvF=rv===MAX;
+  let rvd='';for(let d=0;d<MAX;d++) rvd+=`<span class="bdot${d<rv?' on':''}"></span>`;
+  bdg+=`<span class="badge rev${rvF?' bfull':''}" onclick="togR(event,'${m.id}',${i})"><span class="badge-lbl">Révision</span><span class="bdots">${rvd}</span></span>`;
+  // Quality badge (0–3 stars)
+  const ql=S[kQl(m.id,i)]||0;
+  let stars='';for(let d=0;d<MAXQ;d++) stars+=`<span class="qstar${d<ql?' on':''}">★</span>`;
+  bdg+=`<span class="qbadge${ql===MAXQ?' qmax':''}" onclick="togQl(event,'${m.id}',${i})"><span class="qbadge-lbl">Qualité</span>${stars}</span>`;
+  // Level pill (0=none,1=Facile,2=Moyen,3=Difficile)
+  const lv=S[kLv(m.id,i)]||0;
+  const lvInfo=LVL_DATA[lv];
+  bdg+=`<span class="lvl-pill ${lvInfo.cls}" onclick="togLv(event,'${m.id}',${i})"><span class="lvl-dot"></span><span class="lvl-lbl">${lv===0?'Niveau':lvInfo.lbl}</span></span>`;
+  return `<div class="crow${done?' cdone':''}${hasNote?' has-note':''}${noteOpen?' note-open':''}" id="crow_${m.id}_${i}">
+    <div class="cbox" onclick="togC(event,'${m.id}',${i})"><svg class="cchk" width="10" height="8" viewBox="0 0 10 8" fill="none"><polyline points="1,4 3.5,6.5 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <div class="cinfo"><div class="cname" onclick="togC(event,'${m.id}',${i})">${name}</div><div class="cbadges">${bdg}</div></div>
+    <button class="note-btn" onclick="togNote(event,'${m.id}',${i})"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></button>
+    <div class="crow-notes"><textarea class="notes-ta" placeholder="Note personnelle..." oninput="saveNote('${m.id}',${i},this.value)" onclick="event.stopPropagation()">${noteVal}</textarea></div>
+  </div>`;
+}
+function togC(e,mid,i){e.stopPropagation();S[kC(mid,i)]=!S[kC(mid,i)];afterToggle(mid);}
+function togQ(e,mid,i,qt){e.stopPropagation();const c=S[kQ(mid,i,qt)]||0;S[kQ(mid,i,qt)]=c>=MAX?0:c+1;save();patchRow(mid,i);}
+function togR(e,mid,i){e.stopPropagation();const c=S[kR(mid,i)]||0;S[kR(mid,i)]=c>=MAX?0:c+1;save();patchRow(mid,i);}
+function togQl(e,mid,i){e.stopPropagation();const c=S[kQl(mid,i)]||0;S[kQl(mid,i)]=c>=MAXQ?0:c+1;save();patchRow(mid,i);}
+function togLv(e,mid,i){e.stopPropagation();const c=S[kLv(mid,i)]||0;S[kLv(mid,i)]=c>=3?0:c+1;save();patchRow(mid,i);}
+function togNote(e,mid,i){e.stopPropagation();S[kX(mid,i)]=!S[kX(mid,i)];save();const el=document.getElementById(`crow_${mid}_${i}`);if(el){el.classList.toggle('note-open',!!S[kX(mid,i)]);const n=el.querySelector('.crow-notes');if(n)n.style.display=S[kX(mid,i)]?'block':'none';}}
+function saveNote(mid,i,val){S[kN(mid,i)]=val;save();const el=document.getElementById(`crow_${mid}_${i}`);if(el)el.classList.toggle('has-note',!!val.trim());}
+function selAll(mid,v){const m=DATA.find(d=>d.id===mid);flat(m).forEach((_,i)=>{S[kC(mid,i)]=v;});afterToggle(mid);}
+function patchRow(mid,i){const el=document.getElementById(`crow_${mid}_${i}`);if(el){const m=DATA.find(d=>d.id===mid);const t=document.createElement('div');t.innerHTML=courseRow(m,i,flat(m)[i]);el.replaceWith(t.firstChild);}}
+function afterToggle(mid){save();if(sheetMid===mid){renderSheetHdr();renderSheetBody();}renderHome();}
+
+function setSF(f,el){searchFilt=f;document.querySelectorAll('.sfpill').forEach(p=>p.classList.remove('active'));el.classList.add('active');renderSearch();}
+function renderSearch(){
+  const q=searchQ.toLowerCase().trim();
+  if(!q&&searchFilt==='all'){document.getElementById('search-res').innerHTML=`<div class="empty">Tapez pour rechercher.</div>`;return;}
+  let h='';
+  DATA.forEach(m=>{
+    const all=flat(m);
+    const idxs=all.reduce((a,c,i)=>{
+      const done=!!S[kC(m.id,i)];
+      const lv=S[kLv(m.id,i)]||0;
+      const ql=S[kQl(m.id,i)]||0;
+      const nm=!q||c.toLowerCase().includes(q)||m.name.toLowerCase().includes(q);
+      const fm=searchFilt==='all'
+        ||(searchFilt==='done'&&done)
+        ||(searchFilt==='todo'&&!done)
+        ||(searchFilt==='facile'&&lv===1)
+        ||(searchFilt==='moyen'&&lv===2)
+        ||(searchFilt==='difficile'&&lv===3)
+        ||(searchFilt==='hq'&&ql===MAXQ);
+      if(nm&&fm) a.push(i);return a;
+    },[]);
+    if(!idxs.length) return;
+    const rows=idxs.map(i=>courseRow(m,i,all[i])).join('');
+    h+=`<div class="sres-block"><div class="sres-hdr" onclick="openSheet('${m.id}')"><div class="sres-hdr-av">${abbr(m.name)}</div><span class="sres-hdr-name">${m.name}</span><span class="sres-count">${idxs.length}</span></div>${rows}</div>`;
+  });
+  document.getElementById('search-res').innerHTML=h||`<div class="empty">Aucun résultat.</div>`;
+}
+
+function renderStats(){
+  let tot=0,done=0,qTot=0,qDone=0,rTot=0,rDone=0,nCount=0,qlTot=0,qlDone=0,lvCounts=[0,0,0,0];
+  DATA.forEach(m=>flat(m).forEach((_,i)=>{
+    tot++;
+    if(S[kC(m.id,i)])done++;
+    if((S[kN(m.id,i)]||'').trim())nCount++;
+    m.qcm.forEach(qt=>{qTot+=MAX;qDone+=S[kQ(m.id,i,qt)]||0;});
+    rTot+=MAX;rDone+=S[kR(m.id,i)]||0;
+    qlTot+=MAXQ;qlDone+=S[kQl(m.id,i)]||0;
+    lvCounts[S[kLv(m.id,i)]||0]++;
+  }));
+  const cp=tot?Math.round(done/tot*100):0;
+  const qp=qTot?Math.round(qDone/qTot*100):0;
+  const rp=rTot?Math.round(rDone/rTot*100):0;
+  const np=tot?Math.round(nCount/tot*100):0;
+  const qlp=qlTot?Math.round(qlDone/qlTot*100):0;
+  const mDone=DATA.filter(m=>{const{dc,all}=modStats(m);return dc===all.length&&all.length>0;}).length;
+  const clr=cp===100?'var(--green)':'var(--accent)';
+  let rows='';
+  DATA.forEach(m=>{
+    const all=flat(m);let dc=0,qd=0,qt2=0,rd=0,qld=0,lvHard=0;
+    all.forEach((_,i)=>{
+      if(S[kC(m.id,i)])dc++;
+      m.qcm.forEach(qt=>{qt2+=MAX;qd+=S[kQ(m.id,i,qt)]||0;});
+      rd+=S[kR(m.id,i)]||0;
+      qld+=S[kQl(m.id,i)]||0;
+      if((S[kLv(m.id,i)]||0)===3) lvHard++;
+    });
+    const mp=all.length?Math.round(dc/all.length*100):0;
+    const qpp=qt2?Math.round(qd/qt2*100):0;
+    const qlpp=all.length?Math.round(qld/(all.length*MAXQ)*100):0;
+    const rc=mp===100?'var(--green)':'var(--accent)';
+    rows+=`<div class="smod-item" onclick="openSheet('${m.id}')">
+      <div class="smod-av">${ring(mp,15,2.5,rc,40)}<div class="smod-av-inner">${abbr(m.name)}</div></div>
+      <div class="smod-info"><div class="smod-name">${m.name}</div><div class="smod-bar"><div class="smod-bar-f${mp===100?' done':''}" style="width:${mp}%"></div></div></div>
+      <div class="smod-nums">
+        <div class="smod-num"><div class="smod-num-v">${dc}/${all.length}</div><div class="smod-num-l">Cours</div></div>
+        <div class="smod-num"><div class="smod-num-v blue">${qpp}%</div><div class="smod-num-l">QCM</div></div>
+        <div class="smod-num"><div class="smod-num-v" style="color:#f59e0b">${qlpp}%</div><div class="smod-num-l">Qualité</div></div>
+        ${lvHard?`<div class="smod-num"><div class="smod-num-v" style="color:#dc2626">${lvHard}</div><div class="smod-num-l">Diff.</div></div>`:''}
+      </div>
+    </div>`;
+  });
+  document.getElementById('stats-pg').innerHTML=`
+    <div class="stats-profile">
+      <div class="stats-top">
+        <div class="stats-av">${ring(cp,28,3,clr,72)}<div class="stats-av-inner"><div class="stats-pct">${cp}%</div><div class="stats-pct-l">fait</div></div></div>
+        <div class="stats-meta">
+          <div class="stats-mname">Vue Globale</div>
+          <div class="stats-mnums">
+            <div class="smnum"><span class="smnum-v">${done}</span><span class="smnum-l">faits</span></div>
+            <div class="smnum"><span class="smnum-v">${tot}</span><span class="smnum-l">total</span></div>
+            <div class="smnum"><span class="smnum-v">${mDone}</span><span class="smnum-l">finis</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="stats-kpis">
+      <div class="skpi"><div class="skpi-v">${done}<span class="sub"> / ${tot}</span></div><div class="skpi-l">Cours terminés</div><div class="skpi-bar"><div class="skpi-bar-f" style="width:${cp}%;background:var(--accent)"></div></div></div>
+      <div class="skpi"><div class="skpi-v">${cp}%</div><div class="skpi-l">Avancement</div><div class="skpi-bar"><div class="skpi-bar-f" style="width:${cp}%;background:var(--accent)"></div></div></div>
+      <div class="skpi"><div class="skpi-v blue">${qp}%</div><div class="skpi-l">QCM complétés</div><div class="skpi-bar"><div class="skpi-bar-f" style="width:${qp}%;background:var(--accent)"></div></div></div>
+      <div class="skpi"><div class="skpi-v green">${rp}%</div><div class="skpi-l">Révisions faites</div><div class="skpi-bar"><div class="skpi-bar-f" style="width:${rp}%;background:var(--green)"></div></div></div>
+      <div class="skpi"><div class="skpi-v" style="color:#f59e0b">${qlp}%</div><div class="skpi-l">Qualité d'étude</div><div class="skpi-bar"><div class="skpi-bar-f" style="width:${qlp}%;background:#f59e0b"></div></div></div>
+      <div class="skpi">
+        <div class="skpi-v" style="color:#dc2626">${lvCounts[3]}</div>
+        <div class="skpi-l">Cours difficiles — <span style="color:#ea580c">${lvCounts[2]}</span> moyens — <span style="color:#16a34a">${lvCounts[1]}</span> faciles</div>
+        <div class="skpi-bar" style="height:4px;display:flex;gap:2px;background:none;overflow:visible">
+          <div style="flex:${lvCounts[1]||0};background:#16a34a;border-radius:2px;min-width:${lvCounts[1]?2:0}px"></div>
+          <div style="flex:${lvCounts[2]||0};background:#ea580c;border-radius:2px;min-width:${lvCounts[2]?2:0}px"></div>
+          <div style="flex:${lvCounts[3]||0};background:#dc2626;border-radius:2px;min-width:${lvCounts[3]?2:0}px"></div>
+        </div>
+      </div>
+      <div class="skpi wide"><div class="skpi-v green">${nCount}<span class="sub"> notés</span></div><div class="skpi-l">Cours avec notes — ${np}% du total</div><div class="skpi-bar"><div class="skpi-bar-f" style="width:${np}%;background:var(--green)"></div></div></div>
+    </div>
+    <div class="stats-sec-lbl">Par module</div>
+    ${rows}`;
+}
+
+function confirmReset(){if(confirm('Réinitialiser toute la progression ?')){localStorage.removeItem('res9');S={};renderHome();}}
+
+let ty0=0;
+document.getElementById('sheet-drag').addEventListener('touchstart',e=>{ty0=e.touches[0].clientY;},{passive:true});
+document.getElementById('sheet-drag').addEventListener('touchend',e=>{if(e.changedTouches[0].clientY-ty0>55)closeSheet();},{passive:true});
+document.getElementById('search-inp').addEventListener('input',function(){searchQ=this.value;renderSearch();});
+
+load();renderHome();
+</script>
+</body>
+</html>
