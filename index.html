@@ -507,6 +507,124 @@ body.dark-mode .lvl-pill.lvl3{background:rgba(220,38,38,.15);}
 .motivation-icon { font-size: 18px; flex-shrink: 0; }
 .motivation-text { font-size: 12px; color: var(--text2); line-height: 1.5; }
 .motivation-text strong { color: var(--text); font-weight: 600; }
+
+/* ═══════════════════════════════════════════════
+   RESPONSIVE PC  ≥ 768 px
+═══════════════════════════════════════════════ */
+@media (min-width: 768px) {
+
+  :root {
+    --max: 1080px;
+    --bot: 0px;
+    --nav: 56px;
+  }
+
+  body {
+    max-width: 100%;
+    padding-bottom: 0;
+  }
+
+  /* ── Grille principale : sidebar + contenu ── */
+  #app-wrapper {
+    display: grid !important;
+    grid-template-columns: 220px 1fr;
+    grid-template-rows: var(--nav) 1fr;
+    max-width: var(--max);
+    margin: 0 auto;
+    min-height: 100svh;
+    border-left: 1px solid var(--line);
+    border-right: 1px solid var(--line);
+  }
+
+  /* Topbar sur les 2 colonnes */
+  .topbar {
+    grid-column: 1 / -1;
+    grid-row: 1;
+  }
+
+  /* ── Bottom nav → Sidebar gauche ── */
+  .botnav {
+    grid-column: 1;
+    grid-row: 2;
+    position: sticky;
+    top: var(--nav);
+    height: calc(100svh - var(--nav));
+    left: auto;
+    transform: none;
+    width: auto;
+    max-width: none;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    padding: 12px 10px;
+    border-top: none;
+    border-right: 1px solid var(--line);
+    gap: 4px;
+    overflow: hidden;
+  }
+
+  .bnav {
+    flex-direction: row;
+    justify-content: flex-start;
+    height: 44px;
+    flex: none;
+    padding: 0 14px;
+    border-radius: 10px;
+    gap: 12px;
+  }
+
+  .bnav span { font-size: 14px; font-weight: 500; }
+  .bnav svg  { width: 20px; height: 20px; }
+
+  .bnav.active { background: var(--accent-l); }
+  .bnav.active svg,
+  .bnav.active span { color: var(--accent); }
+
+  /* ── Zone de contenu scrollable ── */
+  #pages-wrap {
+    grid-column: 2;
+    grid-row: 2;
+    overflow-y: auto;
+    height: calc(100svh - var(--nav));
+  }
+
+  /* ── Grille modules : 4 colonnes ── */
+  .mod-grid { grid-template-columns: repeat(4, 1fr); }
+
+  /* ── Stats : 3 colonnes ── */
+  .stats-kpis { grid-template-columns: 1fr 1fr 1fr; }
+  .skpi.wide  { grid-column: 1 / -1; }
+
+  /* ── Sheet → dialogue centré ── */
+  .sheet {
+    bottom: auto;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%) translateY(calc(-50% + 40px));
+    width: min(700px, 90vw);
+    max-width: 700px;
+    border-radius: 14px;
+    max-height: 85svh;
+    opacity: 0;
+    transition: transform .28s cubic-bezier(.32,0,.2,1), opacity .22s;
+  }
+  .sheet.open {
+    transform: translateX(-50%) translateY(-50%);
+    opacity: 1;
+  }
+  .sheet-drag { display: none; }
+}
+
+/* ═══════════════════════════════════════════════
+   GRAND ÉCRAN  ≥ 1200 px
+═══════════════════════════════════════════════ */
+@media (min-width: 1200px) {
+  :root { --max: 1200px; }
+
+  #app-wrapper { grid-template-columns: 240px 1fr; }
+  .mod-grid    { grid-template-columns: repeat(5, 1fr); }
+  .stats-kpis  { grid-template-columns: repeat(3, 1fr); }
+}
 </style>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
@@ -575,6 +693,7 @@ body.dark-mode .lvl-pill.lvl3{background:rgba(220,38,38,.15);}
 <!-- Hidden file input for photo upload -->
 <input type="file" id="photo-input" accept="image/*" onchange="handlePhotoUpload(event)">
 
+<div id="pages-wrap">
 <div id="page-home" class="page active">
   <div class="profile header-bg" id="home-profile"></div>
   <div class="view-bar">
@@ -624,7 +743,8 @@ body.dark-mode .lvl-pill.lvl3{background:rgba(220,38,38,.15);}
       </div>
     </div>
   </div>
-</div>
+</div><!-- /page-dua -->
+</div><!-- /pages-wrap -->
 
 <div class="overlay" id="overlay" onclick="closeSheet()"></div>
 <div class="sheet" id="sheet">
@@ -665,7 +785,7 @@ const DATA=[
   {id:'anapath',name:'Anatomie Pathologique',qcm:['cycle','resid'],courses:['Processus inflammatoire','Generalites sur les tumeurs','Progression du KC','Tissu Cancereux','Tumeurs Benignes','Tmr epitheliale Malpighienne','Tmr epitheliales glandulaires','Tmr mesenchymateuse','Lymphome','Tumeurs Nerveuses','Tumeurs Melanocytaires','Tumeurs Embryonnaires','Pathologies vasculaires','Atherosclerose','Embolie','Ischemie et Infarctus','Thrombose','Vascularites']},
   {id:'genetique',name:'Genetique',qcm:['cycle','resid'],courses:['Acide nucleique','Chromatine','Genes','Replication de l\'ADN','Transcription de l\'ADN','Traduction ARN','Caryotype et anomalies']},
   {id:'immunologie',name:'Immunologie',qcm:['myqcm','resid','cycle'],courses:['Organes et tissus lymphoides','CMH','Systeme de complement','Antigene','Immunoglobuline','Cellules Immunites','Reponses immunitaires','Maladies autoimmunes','Hypersensibilite','Immunite anti-infectieuse','Immunite anti-tumorale','Deficits Immunitaires']},
-  {id:'biochimie',name:'Biochimie',qcm:['resid','cycle','pharma'],courses:['Anomalies electrolytiques','Exploration des lipides','Fonction renale','Fonction hepatique','Remodelage osseux','Explorations digestives','Liquide de ponction','Metabolisme du fer','Equilibre acido-basique','Metabolisme des glucides','Exploration des proteines','Exploration de l\'inflammation','Exploration Cardiaque','Exploration LCR','Glycolyse','Neoglycogenese','Enzymes','Metabolisme du glycogene','Metabolisme protidique','Hormones steroides', 'Hormones thyroidiens','Hormones sexuelles','Cathecolamines']},
+  {id:'biochimie',name:'Biochimie',qcm:['resid','cycle','pharma'],courses:['Anomalies electrolytiques','Exploration des lipides','Fonction renale','Fonction hepatique','Remodelage osseux','Explorations digestives','Liquide de ponction','Metabolisme du fer','Equilibre acido-basique','Metabolisme des glucides','Exploration des proteines','Exploration de l\'inflammation','Exploration Cardiaque','Exploration LCR','Glycolyse','Neoglycogenese','Enzymes','Metabolisme du glycogene','Metabolisme protidique', 'Hormones steroides', 'Hormones thyroidiens','Hormones sexuelles','Cathecolamines']},
   {id:'cytologie',name:'Cytologie',qcm:['cycle','resid'],courses:['Noyau et cycle cellulaire']},
   {id:'physio',name:'Physiologie',qcm:['cycle','resid','myqcm'],sections:[
     {lbl:'Bases',courses:['Thermoregulation','Compartiments liquidiens','Membrane plasmique','Ligand-recepteur','Biooenergetique','Transmission Synaptique','Physiologie du muscle','SNA']},
