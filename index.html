@@ -1,17 +1,33 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Residanat 2026</title>
-<link rel="manifest" href="/todo/manifest.json">
+
+<!-- ══ PWA ══ -->
+<link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0095f6">
+
+<!-- iOS PWA -->
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Residanat">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="apple-touch-icon" sizes="192x192" href="icon-192.png">
+
+<!-- Android / SEO -->
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="application-name" content="Residanat 2026">
+<meta name="description" content="Suivez votre progression pour le concours de Résidanat 2026">
+
 <script>
-  if('serviceWorker' in navigator){
-    navigator.serviceWorker.register('/todo/sw.js');
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js', { scope: './' })
+        .then(reg => console.log('SW enregistré:', reg.scope))
+        .catch(err => console.warn('SW échec:', err));
+    });
   }
 </script>
 <style>
@@ -30,8 +46,6 @@
   --green:      #1e9f5e;
   --green-l:    #e6f7ef;
   --purple:     #9333ea;
-  --orange:     #f59e0b;
-  --red:        #dc2626;
   --font:       -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --max:        480px;
   --nav:        44px;
@@ -68,44 +82,190 @@ input,textarea{font-family:inherit;}
 .icon-btn{width:32px;height:32px;display:flex;align-items:center;justify-content:center;color:var(--text);border-radius:50%;transition:background .12s;}
 .icon-btn:active{background:var(--bg3);}
 
+/* HEADER BACKGROUND */
+.header-bg {
+  position: relative;
+  background: url('g.png') center/cover no-repeat;
+  background-color: var(--bg);
+  z-index: 1;
+}
+.header-bg::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--bg);
+  opacity: 0.88;
+  z-index: -1;
+  transition: background 0.2s;
+}
+
 /* PAGES */
 .page{display:none;}
 .page.active{display:block;}
 
-/* PROFILE & UNIFIED HEADERS */
-.profile-banner { position: relative; width: 100%; height: 110px; overflow: hidden; background: var(--bg3); }
-.profile-banner-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 30%; display: block; }
-.profile-banner-overlay { position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.3) 100%); transition: background 0.2s; }
-body.dark-mode .profile-banner-overlay { background: linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.8) 100%); }
-
-.profile-inner { padding: 0 16px 16px; background: var(--bg); border-bottom: 1px solid var(--line); position: relative; }
-.profile-avatar-wrap { margin-top: -42px; margin-bottom: 10px; display: flex; align-items: flex-end; justify-content: space-between; position: relative; z-index: 2; }
-.profile-avatar { width: 80px; height: 80px; border-radius: 50%; flex-shrink: 0; position: relative; border: 4px solid var(--bg); background: var(--bg3); }
-.profile-avatar svg { position: absolute; inset: 0; width: 100%; height: 100%; transform: rotate(-90deg); }
-.profile-avatar .icon-avatar { position: static; transform: none; width: 34px; height: 34px; }
-.profile-avatar-inner { position: absolute; inset: 4px; border-radius: 50%; background: var(--bg); display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 700; color: var(--text2); overflow: hidden; }
-
-.profile-stats { display: flex; flex: 1; padding-left: 16px; padding-bottom: 6px; }
-.pstat { flex: 1; text-align: center; }
-.pstat-v { display: block; font-size: 18px; font-weight: 700; color: var(--text); line-height: 1.2; }
-.pstat-l { display: block; font-size: 11px; color: var(--text2); margin-top: 1px; }
-
-.profile-name { font-size: 16px; font-weight: 800; color: var(--text); margin-bottom: 2px; letter-spacing: -0.3px; }
-.profile-bio { font-size: 13px; color: var(--text2); margin-bottom: 12px; }
-.pbar-track { height: 3px; background: var(--line2); border-radius: 99px; overflow: hidden; }
-.pbar-fill { height: 100%; border-radius: 99px; transition: width .7s cubic-bezier(.4,0,.2,1); }
-.pbar-label { display: flex; justify-content: space-between; margin-top: 5px; }
-.pbar-label span { font-size: 11px; color: var(--text2); }
-.pbar-label strong { font-size: 11px; font-weight: 600; color: var(--text); }
-
-/* SECTION HEADERS */
-.section-header {
-  padding: 14px 16px 8px; font-size: 12px; font-weight: 700; color: var(--text2);
-  text-transform: uppercase; letter-spacing: 0.8px; background: var(--bg2);
-  border-bottom: 1px solid var(--line2); display: flex; align-items: center; gap: 8px;
+/* ══════════════════════════════════════
+   WELCOME CARD
+══════════════════════════════════════ */
+.welcome-section {
+  padding: 16px 16px 0;
 }
-.sh-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
-.sh-count { margin-left: auto; font-size: 13px; color: var(--text3); font-variant-numeric: tabular-nums; }
+
+.welcome-card {
+  background: linear-gradient(135deg, var(--accent) 0%, #0077cc 100%);
+  border-radius: 18px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 24px rgba(0,149,246,0.25);
+  animation: welcomeFadeIn 0.5s ease;
+}
+@keyframes welcomeFadeIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.welcome-card::after {
+  content: '';
+  position: absolute;
+  top: -30px; right: -30px;
+  width: 120px; height: 120px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.08);
+  pointer-events: none;
+}
+.welcome-card::before {
+  content: '';
+  position: absolute;
+  bottom: -20px; left: 40%;
+  width: 80px; height: 80px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.06);
+  pointer-events: none;
+}
+
+/* PHOTO AVATAR */
+.wc-photo-wrap {
+  position: relative;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+.wc-photo {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 2.5px solid rgba(255,255,255,0.5);
+  background: rgba(255,255,255,0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  transition: border-color 0.2s, transform 0.15s;
+  font-size: 24px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -0.5px;
+  flex-shrink: 0;
+}
+.wc-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+.wc-photo-wrap:active .wc-photo {
+  transform: scale(0.93);
+}
+.wc-photo-edit {
+  position: absolute;
+  bottom: 0; right: 0;
+  width: 22px; height: 22px;
+  background: #fff;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+}
+.wc-photo-edit svg { color: var(--accent); }
+#photo-input { display: none; }
+
+/* WELCOME TEXT */
+.wc-info {
+  flex: 1;
+  min-width: 0;
+}
+.wc-greeting {
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.75);
+  margin-bottom: 3px;
+  letter-spacing: 0.3px;
+}
+.wc-name {
+  font-size: 20px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.5px;
+  margin-bottom: 6px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.wc-badges {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.wc-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(255,255,255,0.18);
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 99px;
+  padding: 3px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #fff;
+}
+.wc-badge svg { opacity: 0.85; }
+
+/* MINI PROGRESS RING IN CARD */
+.wc-ring-wrap {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+.wc-ring-pct {
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1;
+}
+.wc-ring-lbl {
+  font-size: 9px;
+  color: rgba(255,255,255,0.7);
+}
+
+/* PROFILE */
+.profile{padding:14px 16px 16px;border-bottom:1px solid var(--line);}
+.profile-row{display:flex;align-items:center;gap:24px;margin-bottom:14px;}
+.profile-avatar{width:80px;height:80px;border-radius:50%;flex-shrink:0;position:relative;}
+.profile-avatar svg{position:absolute;inset:0;width:100%;height:100%;transform:rotate(-90deg);}
+.profile-avatar-inner{position:absolute;inset:5px;border-radius:50%;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;color:var(--text2);}
+.profile-stats{display:flex;flex:1;}
+.pstat{flex:1;text-align:center;}
+.pstat-v{display:block;font-size:18px;font-weight:700;color:var(--text);line-height:1.2;}
+.pstat-l{display:block;font-size:12px;color:var(--text2);margin-top:1px;}
+.profile-name{font-size:14px;font-weight:700;color:var(--text);margin-bottom:2px;}
+.profile-bio{font-size:13px;color:var(--text2);margin-bottom:12px;}
+.pbar-track{height:3px;background:var(--line2);border-radius:99px;overflow:hidden;}
+.pbar-fill{height:100%;border-radius:99px;transition:width .7s cubic-bezier(.4,0,.2,1);}
+.pbar-label{display:flex;justify-content:space-between;margin-top:5px;}
+.pbar-label span{font-size:11px;color:var(--text2);}
+.pbar-label strong{font-size:11px;font-weight:600;color:var(--text);}
 
 /* COMPTEUR EN DIRECT */
 .online-counter{display:flex; align-items:center; justify-content:center; gap:6px; font-size:10px; color:var(--text3); margin-top:16px; font-weight:500; letter-spacing:0.2px;}
@@ -113,7 +273,7 @@ body.dark-mode .profile-banner-overlay { background: linear-gradient(to bottom, 
 @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(30,159,94,.4); } 70% { box-shadow: 0 0 0 4px rgba(30,159,94,0); } 100% { box-shadow: 0 0 0 0 rgba(30,159,94,0); } }
 
 /* VIEW TOGGLE */
-.view-bar{display:flex;border-bottom:1px solid var(--line);background:var(--bg);}
+.view-bar{display:flex;border-bottom:1px solid var(--line);}
 .vtab{flex:1;height:44px;display:flex;align-items:center;justify-content:center;color:var(--text3);cursor:pointer;border-top:1.5px solid transparent;transition:color .15s,border-color .15s;}
 .vtab.active{color:var(--text);border-top-color:var(--text);}
 
@@ -122,21 +282,19 @@ body.dark-mode .profile-banner-overlay { background: linear-gradient(to bottom, 
 .mgcell{background:var(--bg);aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;position:relative;padding:10px;gap:6px;transition:background .1s;}
 .mgcell:active{background:var(--bg2);}
 .mgcell-ring{position:relative;width:52px;height:52px;flex-shrink:0;}
+.mgcell-ring svg{position:absolute;inset:0;width:100%;height:100%;transform:rotate(-90deg);}
 .mgcell-inner{position:absolute;inset:6px;border-radius:50%;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--text2);letter-spacing:-.3px;}
 .mgcell-name{font-size:9.5px;font-weight:500;color:var(--text2);text-align:center;line-height:1.3;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;width:100%;}
 .mgcell-check{position:absolute;top:6px;right:6px;width:14px;height:14px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;}
 
-/* CONSOLIDATED LIST ROWS */
-.mrow, .smod-item {
-  display: flex; align-items: center; gap: 12px; padding: 12px 16px;
-  border-bottom: 1px solid var(--line2); background: var(--bg); cursor: pointer; transition: background .1s;
-}
-.mrow:active, .smod-item:active { background: var(--bg2); }
-.mrow-info, .smod-info, .cinfo { flex: 1; min-width: 0; }
-
+/* LIST */
+.mrow{display:flex;align-items:center;gap:12px;padding:10px 16px;border-bottom:1px solid var(--line2);cursor:pointer;transition:background .1s;}
+.mrow:active{background:var(--bg2);}
 .mrow-av{width:48px;height:48px;border-radius:50%;flex-shrink:0;position:relative;}
+.mrow-av svg{position:absolute;inset:0;width:100%;height:100%;transform:rotate(-90deg);}
 .mrow-av-inner{position:absolute;inset:5px;border-radius:50%;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--text2);}
-.mrow-name, .smod-name { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mrow-info{flex:1;min-width:0;}
+.mrow-name{font-size:14px;font-weight:600;color:var(--text);margin-bottom:2px;}
 .mrow-sub{font-size:12px;color:var(--text2);}
 .mrow-right{text-align:right;flex-shrink:0;}
 .mrow-pct{font-size:14px;font-weight:600;color:var(--text);}
@@ -161,17 +319,19 @@ body.dark-mode .profile-banner-overlay { background: linear-gradient(to bottom, 
 .sa-btn:active{background:var(--bg2);}
 .sheet-pills{display:flex;gap:6px;padding:10px 16px;border-bottom:1px solid var(--line2);flex-shrink:0;overflow-x:auto;scrollbar-width:none;}
 .sheet-pills::-webkit-scrollbar{display:none;}
-.spill{flex-shrink:0;padding:6px 14px;font-size:13px;font-weight:600;color:var(--text2);background:var(--bg3);border:none;border-radius:99px;cursor:pointer;transition:all .15s;}
+.spill{flex-shrink:0;padding:5px 14px;font-size:13px;font-weight:500;color:var(--text2);background:var(--bg3);border:none;border-radius:99px;cursor:pointer;transition:all .12s;}
 .spill.active{background:var(--text);color:var(--bg);}
+.sec-lbl{font-size:12px;font-weight:600;color:var(--text2);padding:10px 16px 4px;}
 .sheet-body{overflow-y:auto;flex:1;-webkit-overflow-scrolling:touch;}
 
 /* COURSE ROW */
-.crow{display:flex;align-items:flex-start;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line2);background:var(--bg);}
+.crow{display:flex;align-items:flex-start;gap:12px;padding:10px 16px;border-bottom:1px solid var(--line2);}
 .cbox{width:22px;height:22px;border-radius:50%;border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;margin-top:1px;transition:all .15s;background:var(--bg);}
 .cbox:active{transform:scale(.82);}
 .crow.cdone .cbox{background:var(--green);border-color:var(--green);}
 .cchk{display:none;}
 .crow.cdone .cchk{display:block;}
+.cinfo{flex:1;min-width:0;}
 .cname{font-size:14px;font-weight:400;color:var(--text);line-height:1.4;cursor:pointer;padding-bottom:7px;}
 .crow.cdone .cname{color:var(--text3);text-decoration:line-through;}
 .cbadges{display:flex;flex-wrap:wrap;gap:4px;}
@@ -182,6 +342,7 @@ body.dark-mode .profile-banner-overlay { background: linear-gradient(to bottom, 
 .crow.note-open .crow-notes{display:block;}
 .notes-ta{width:100%;background:var(--bg3);border:1px solid var(--line2);border-radius:8px;padding:9px 11px;color:var(--text);font-size:13px;outline:none;resize:vertical;min-height:60px;line-height:1.5;transition:border-color .15s;}
 .notes-ta:focus{border-color:var(--accent);}
+.notes-ta::placeholder{color:var(--text3);}
 
 /* BADGES */
 .badge{display:inline-flex;align-items:center;gap:4px;background:var(--bg3);border:1px solid var(--line2);border-radius:6px;padding:3px 7px;cursor:pointer;transition:all .12s;user-select:none;}
@@ -195,7 +356,6 @@ body.dark-mode .profile-banner-overlay { background: linear-gradient(to bottom, 
 .badge.bfull{background:var(--green-l);border-color:rgba(30,159,94,.3);}
 .badge.bfull .badge-lbl{color:var(--green);}
 .badge.bfull .bdot.on{background:var(--green);}
-
 .badge.rev .bdot.on{background:var(--purple);}
 .badge.rev:hover{border-color:var(--purple);background:var(--bg2);}
 body.dark-mode .badge.rev:hover{background:rgba(168,85,247,0.15);}
@@ -205,23 +365,35 @@ body.dark-mode .badge.rev:hover{background:rgba(168,85,247,0.15);}
 .badge.rev.bfull .bdot.on{background:var(--green);}
 
 /* SEARCH PAGE */
-.search-inp{width:100%;height:44px;background:var(--bg);border:2px solid var(--line2);border-radius:12px;padding:0 14px 0 40px;font-size:15px;color:var(--text);outline:none;transition:border-color .15s;}
-.search-inp:focus{border-color:var(--accent);}
-.sres-block { margin-bottom: 0; }
-.sres-hdr {
-  display: flex; align-items: center; gap: 10px; padding: 12px 16px;
-  background: var(--bg2); border-bottom: 1px solid var(--line2); cursor: pointer;
-}
-.sres-hdr-av {
-  width: 28px; height: 28px; border-radius: 50%; background: var(--bg);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 10px; font-weight: 700; color: var(--accent);
-  border: 1px solid var(--line); flex-shrink: 0;
-}
-.sres-hdr-name { flex: 1; font-size: 12px; font-weight: 700; color: var(--text); text-transform: uppercase; letter-spacing: 0.5px; }
-.sres-count { font-size: 13px; color: var(--text3); font-variant-numeric: tabular-nums; }
+.search-pg{padding:8px 16px 0;}
+.search-wrap{position:relative;margin-bottom:12px;}
+.search-wrap svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text3);pointer-events:none;}
+.search-inp{width:100%;height:36px;background:var(--bg3);border:none;border-radius:10px;padding:0 14px 0 38px;font-size:14px;color:var(--text);outline:none;}
+.search-inp:focus{background:var(--line2);}
+.search-inp::placeholder{color:var(--text3);}
+.sf-row{display:flex;gap:6px;margin-bottom:12px;overflow-x:auto;scrollbar-width:none;}
+.sf-row::-webkit-scrollbar{display:none;}
+.sres-block{border-bottom:1px solid var(--line2);margin-bottom:6px;}
+.sres-hdr{display:flex;align-items:center;gap:10px;padding:10px 0;cursor:pointer;}
+.sres-hdr-av{width:32px;height:32px;border-radius:50%;background:var(--bg3);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--text2);}
+.sres-hdr-name{flex:1;font-size:13px;font-weight:700;color:var(--text);}
+.sres-count{font-size:12px;color:var(--text2);}
 
 /* STATS PAGE */
+.stats-profile{padding:18px 16px 16px;border-bottom:1px solid var(--line);}
+.stats-top{display:flex;align-items:center;gap:20px;margin-bottom:14px;}
+.stats-av{width:72px;height:72px;border-radius:50%;flex-shrink:0;position:relative;}
+.stats-av svg{position:absolute;inset:0;width:100%;height:100%;transform:rotate(-90deg);}
+.stats-av-inner{position:absolute;inset:6px;border-radius:50%;background:var(--bg3);display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.stats-pct{font-size:17px;font-weight:700;color:var(--text);line-height:1;}
+.stats-pct-l{font-size:9px;color:var(--text2);margin-top:1px;}
+.stats-meta{flex:1;}
+.stats-mname{font-size:15px;font-weight:700;color:var(--text);margin-bottom:10px;}
+.stats-mnums{display:flex;}
+.smnum{flex:1;text-align:center;}
+.smnum+.smnum{border-left:1px solid var(--line2);}
+.smnum-v{display:block;font-size:16px;font-weight:700;color:var(--text);line-height:1.2;}
+.smnum-l{display:block;font-size:11px;color:var(--text2);margin-top:1px;}
 .stats-kpis{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line2);border-bottom:1px solid var(--line2);}
 .skpi{background:var(--bg);padding:16px;}
 .skpi.wide{grid-column:1/-1;}
@@ -232,9 +404,14 @@ body.dark-mode .badge.rev:hover{background:rgba(168,85,247,0.15);}
 .skpi-l{font-size:12px;color:var(--text2);margin-bottom:8px;}
 .skpi-bar{height:2px;background:var(--line2);border-radius:99px;overflow:hidden;}
 .skpi-bar-f{height:100%;border-radius:99px;transition:width .7s;}
-
+.stats-sec-lbl{font-size:12px;font-weight:700;color:var(--text2);padding:14px 16px 6px;border-bottom:1px solid var(--line2);}
+.smod-item{display:flex;align-items:center;gap:12px;padding:10px 16px;border-bottom:1px solid var(--line2);cursor:pointer;transition:background .1s;}
+.smod-item:active{background:var(--bg2);}
 .smod-av{width:40px;height:40px;border-radius:50%;flex-shrink:0;position:relative;}
+.smod-av svg{position:absolute;inset:0;width:100%;height:100%;transform:rotate(-90deg);}
 .smod-av-inner{position:absolute;inset:4px;border-radius:50%;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--text2);}
+.smod-info{flex:1;min-width:0;}
+.smod-name{font-size:13px;font-weight:600;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-bottom:3px;}
 .smod-bar{height:2px;background:var(--line2);border-radius:99px;overflow:hidden;}
 .smod-bar-f{height:100%;border-radius:99px;background:var(--accent);}
 .smod-bar-f.done{background:var(--green);}
@@ -245,49 +422,68 @@ body.dark-mode .badge.rev:hover{background:rgba(168,85,247,0.15);}
 .smod-num-v.green{color:var(--green);}
 .smod-num-l{font-size:9px;color:var(--text3);margin-top:2px;}
 
+/* DUA */
+.dua-pg{padding:16px;}
+.dua-card{border:1px solid var(--line2);border-radius:12px;overflow:hidden;}
+.dua-top{padding:20px 18px 16px;background:var(--bg);}
+.dua-lbl{font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.8px;margin-bottom:18px;}
+.dua-arabic{font-size:19px;line-height:2.1;color:var(--text);text-align:right;direction:rtl;font-family:'Amiri','Traditional Arabic',serif;margin-bottom:16px;}
+.dua-bottom{background:var(--bg2);border-top:1px solid var(--line2);padding:16px 18px;}
+.dua-trans{font-size:13px;line-height:1.7;color:var(--text2);margin-bottom:12px;}
+.dua-amin{text-align:right;direction:rtl;font-family:'Amiri',serif;font-size:17px;color:var(--accent);}
+
 /* BOTTOM NAV */
 .botnav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:var(--max);z-index:600;background:var(--bg-alpha);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid var(--line);height:calc(var(--bot) + env(safe-area-inset-bottom,0px));display:flex;align-items:flex-start; transition: background 0.2s;}
-.bnav{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;height:var(--bot);gap:2px;cursor:pointer;transition:opacity .1s;position:relative;}
+.bnav{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;height:var(--bot);gap:2px;cursor:pointer;transition:opacity .1s;}
 .bnav:active{opacity:.4;}
 .bnav svg{display:block;color:var(--text3);transition:color .12s;}
 .bnav span{font-size:9.5px;font-weight:500;color:var(--text3);letter-spacing:.1px;transition:color .12s;}
 .bnav.active svg,.bnav.active span{color:var(--text);}
 
-/* QUALITY & LEVEL BADGES */
+/* QUALITY BADGE */
 .qbadge{display:inline-flex;align-items:center;gap:3px;background:var(--bg3);border:1px solid var(--line2);border-radius:6px;padding:3px 7px;cursor:pointer;transition:all .12s;user-select:none;}
 .qbadge:active{transform:scale(.92);}
 .qbadge:hover{border-color:#f59e0b;background:#fffbeb;}
 body.dark-mode .qbadge:hover{background:rgba(245,158,11,.15);}
 .qstar{font-size:10px;color:var(--line);transition:color .15s;line-height:1;}
 .qstar.on{color:#f59e0b;}
-.qbadge-lbl{font-size:10px;font-weight:600;color:var(--text2);letter-spacing:.2px;}
+.qbadge-lbl{font-size:10px;font-weight:600;color:var(--text2);letter-spacing:.2px;transition:color .12s;}
 .qbadge:hover .qbadge-lbl{color:#f59e0b;}
 .qbadge.qmax{background:#fffbeb;border-color:rgba(245,158,11,.35);}
 body.dark-mode .qbadge.qmax{background:rgba(245,158,11,.15);}
 .qbadge.qmax .qbadge-lbl{color:#f59e0b;}
 
+/* LEVEL PILL */
 .lvl-pill{display:inline-flex;align-items:center;gap:4px;border-radius:6px;padding:3px 8px;cursor:pointer;transition:all .12s;user-select:none;border:1px solid var(--line2);background:var(--bg3);}
 .lvl-pill:active{transform:scale(.92);}
 .lvl-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
 .lvl-lbl{font-size:10px;font-weight:600;letter-spacing:.2px;}
-.lvl-pill.lvl0{color:var(--text3);} .lvl-pill.lvl0 .lvl-dot{background:var(--text3);}
+.lvl-pill.lvl0{color:var(--text3);}
+.lvl-pill.lvl0 .lvl-lbl{color:var(--text3);}
+.lvl-pill.lvl0 .lvl-dot{background:var(--text3);}
 .lvl-pill.lvl1{background:#f0fdf4;border-color:rgba(22,163,74,.3);}
 body.dark-mode .lvl-pill.lvl1{background:rgba(22,163,74,.15);}
-.lvl-pill.lvl1 .lvl-lbl{color:#16a34a;} .lvl-pill.lvl1 .lvl-dot{background:#16a34a;}
+.lvl-pill.lvl1 .lvl-lbl{color:#16a34a;}
+.lvl-pill.lvl1 .lvl-dot{background:#16a34a;}
 .lvl-pill.lvl2{background:#fff7ed;border-color:rgba(234,88,12,.3);}
 body.dark-mode .lvl-pill.lvl2{background:rgba(234,88,12,.15);}
-.lvl-pill.lvl2 .lvl-lbl{color:#ea580c;} .lvl-pill.lvl2 .lvl-dot{background:#ea580c;}
+.lvl-pill.lvl2 .lvl-lbl{color:#ea580c;}
+.lvl-pill.lvl2 .lvl-dot{background:#ea580c;}
 .lvl-pill.lvl3{background:#fef2f2;border-color:rgba(220,38,38,.3);}
 body.dark-mode .lvl-pill.lvl3{background:rgba(220,38,38,.15);}
-.lvl-pill.lvl3 .lvl-lbl{color:#dc2626;} .lvl-pill.lvl3 .lvl-dot{background:#dc2626;}
+.lvl-pill.lvl3 .lvl-lbl{color:#dc2626;}
+.lvl-pill.lvl3 .lvl-dot{background:#dc2626;}
 
-.empty{text-align:center;padding:48px 20px;font-size:14px;color:var(--text3);}
+.empty{text-align:center;padding:48px 20px;font-size:14px;color:var(--text2);}
 
-/* LOADING & AUTH SCREENS */
+/* ── LOADING SCREEN ── */
 #loading-screen{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;}
 .ls-logo{font-size:22px;font-weight:800;color:var(--text);letter-spacing:-.5px;}
 .ls-spin{width:24px;height:24px;border:2.5px solid var(--line2);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg)}}
+.ls-err{font-size:13px;color:#dc2626;text-align:center;max-width:280px;line-height:1.5;}
+
+/* ── AUTH SCREEN ── */
 #auth-screen{position:fixed;inset:0;z-index:9998;background:var(--bg);display:none;flex-direction:column;align-items:center;justify-content:center;padding:24px;}
 #auth-screen.show{display:flex;}
 .auth-logo{font-size:26px;font-weight:800;color:var(--text);letter-spacing:-.8px;margin-bottom:8px;}
@@ -296,203 +492,416 @@ body.dark-mode .lvl-pill.lvl3{background:rgba(220,38,38,.15);}
 .auth-tabs{display:flex;border-bottom:1px solid var(--line);}
 .atab{flex:1;height:44px;font-size:14px;font-weight:600;color:var(--text2);background:none;border:none;cursor:pointer;transition:color .15s,background .15s;position:relative;}
 .atab::after{content:'';position:absolute;bottom:0;left:20%;right:20%;height:2px;background:var(--accent);border-radius:99px;opacity:0;transition:opacity .15s;}
-.atab.active{color:var(--text);} .atab.active::after{opacity:1;}
-.auth-panel{display:none;padding:20px;} .auth-panel.active{display:block;}
+.atab.active{color:var(--text);}
+.atab.active::after{opacity:1;}
+.auth-panel{display:none;padding:20px;}
+.auth-panel.active{display:block;}
 .auth-field{margin-bottom:12px;}
 .auth-label{font-size:12px;font-weight:600;color:var(--text2);margin-bottom:5px;display:block;letter-spacing:.2px;}
-.auth-input{width:100%;height:42px;background:var(--bg3);border:1.5px solid var(--line);border-radius:10px;padding:0 14px;font-size:14px;color:var(--text);outline:none;transition:border-color .15px;}
-.auth-input:focus{border-color:var(--accent);} .auth-input::placeholder{color:var(--text3);}
+.auth-input{width:100%;height:42px;background:var(--bg3);border:1.5px solid var(--line);border-radius:10px;padding:0 14px;font-size:14px;color:var(--text);outline:none;transition:border-color .15s;}
+.auth-input:focus{border-color:var(--accent);}
+.auth-input::placeholder{color:var(--text3);}
 .auth-btn{width:100%;height:42px;background:var(--accent);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;margin-top:4px;transition:opacity .12s;}
-.auth-btn:active{opacity:.8;} .auth-btn:disabled{opacity:.5;cursor:not-allowed;}
+.auth-btn:active{opacity:.8;}
+.auth-btn:disabled{opacity:.5;cursor:not-allowed;}
 .auth-msg{font-size:12px;margin-top:10px;text-align:center;min-height:16px;}
-.auth-msg.err{color:#dc2626;} .auth-msg.ok{color:var(--green);}
+.auth-msg.err{color:#dc2626;}
+.auth-msg.ok{color:var(--green);}
 .auth-users-info{font-size:11px;color:var(--text3);text-align:center;margin-top:16px;}
 
-/* RESPONSIVE PC >= 768px */
+/* MOTIVATIONAL QUOTE */
+.motivation-strip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--bg3);
+  border: 1px solid var(--line2);
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin: 12px 16px 0;
+  animation: welcomeFadeIn 0.6s ease 0.1s both;
+}
+.motivation-icon { font-size: 18px; flex-shrink: 0; }
+.motivation-text { font-size: 12px; color: var(--text2); line-height: 1.5; }
+.motivation-text strong { color: var(--text); font-weight: 600; }
+
+/* ═══════════════════════════════════════════════
+   RESPONSIVE PC  ≥ 768 px
+═══════════════════════════════════════════════ */
 @media (min-width: 768px) {
-  :root { --max: 1080px; --bot: 0px; --nav: 56px; }
-  body { max-width: 100%; padding-bottom: 0; }
-  #app-wrapper { display: grid !important; grid-template-columns: 220px 1fr; grid-template-rows: var(--nav) 1fr; max-width: var(--max); margin: 0 auto; min-height: 100svh; border-left: 1px solid var(--line); border-right: 1px solid var(--line); }
-  .topbar { grid-column: 1 / -1; grid-row: 1; }
-  .botnav { grid-column: 1; grid-row: 2; position: sticky; top: var(--nav); height: calc(100svh - var(--nav)); left: auto; transform: none; width: auto; max-width: none; flex-direction: column; align-items: stretch; justify-content: flex-start; padding: 12px 10px; border-top: none; border-right: 1px solid var(--line); gap: 4px; overflow: hidden; }
-  .bnav { flex-direction: row; justify-content: flex-start; height: 44px; flex: none; padding: 0 14px; border-radius: 10px; gap: 12px; }
-  .bnav span { font-size: 14px; font-weight: 500; }
-  .bnav svg  { width: 20px; height: 20px; }
-  .bnav.active { background: var(--accent-l); }
-  .bnav.active svg, .bnav.active span { color: var(--accent); }
-  #pages-wrap { grid-column: 2; grid-row: 2; overflow-y: auto; height: calc(100svh - var(--nav)); }
-  .mod-grid { grid-template-columns: repeat(4, 1fr); }
-  .stats-kpis { grid-template-columns: 1fr 1fr 1fr; }
-  .skpi.wide { grid-column: 1 / -1; }
-  .sheet { bottom: auto; top: 50%; left: 50%; transform: translateX(-50%) translateY(calc(-50% + 40px)); width: min(700px, 90vw); max-width: 700px; border-radius: 14px; max-height: 85svh; opacity: 0; transition: transform .28s cubic-bezier(.32,0,.2,1), opacity .22s; }
-  .sheet.open { transform: translateX(-50%) translateY(-50%); opacity: 1; }
-  .sheet-drag { display: none; }
-}
-@media (min-width: 1200px) {
-  :root { --max: 1200px; }
-  #app-wrapper { grid-template-columns: 240px 1fr; }
-  .mod-grid { grid-template-columns: repeat(5, 1fr); }
-  .stats-kpis { grid-template-columns: repeat(3, 1fr); }
-}
 
-.profile-avatar-inner.uploading {
-  opacity: 0.4;
-}
-.profile-avatar-inner.uploading::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  border: 2.5px solid transparent;
-  border-top-color: var(--accent);
-  animation: spin .7s linear infinite;
-}
-
-/* CLASSEMENT PAGE */
-.rank-header { padding: 16px; background: var(--bg); border-bottom: 1px solid var(--line2); }
-.rank-my-card {
-  display: flex; align-items: center; gap: 14px;
-  background: var(--bg3); border: 1px solid var(--line2);
-  border-radius: 12px; padding: 14px 16px; margin-bottom: 14px;
-}
-.rank-my-pos { font-size: 28px; font-weight: 800; color: var(--accent); line-height: 1; flex-shrink: 0; min-width: 40px; text-align: center; }
-.rank-my-pos-label { font-size: 10px; font-weight: 600; color: var(--text3); letter-spacing: .3px; margin-top: 2px; text-align: center; }
-.rank-my-info { flex: 1; min-width: 0; }
-.rank-my-name { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 2px; }
-.rank-my-bar-track { height: 3px; background: var(--line2); border-radius: 99px; overflow: hidden; margin: 6px 0 4px; }
-.rank-my-bar-fill { height: 100%; border-radius: 99px; background: var(--accent); transition: width .7s; }
-.rank-my-metrics { display: flex; gap: 14px; }
-.rank-my-metric { font-size: 11px; color: var(--text2); }
-.rank-my-metric strong { color: var(--text); font-weight: 600; }
-.rank-podium { display: flex; align-items: flex-end; justify-content: center; gap: 8px; margin-bottom: 4px; }
-.podium-col { display: flex; flex-direction: column; align-items: center; gap: 4px; flex: 1; max-width: 100px; }
-.podium-bar { width: 100%; border-radius: 6px 6px 0 0; display: flex; align-items: flex-start; justify-content: center; padding-top: 8px; min-height: 30px; }
-.podium-pct { font-size: 12px; font-weight: 700; color: #fff; letter-spacing: -.2px; }
-.podium-name { font-size: 10px; font-weight: 600; color: var(--text2); text-align: center; }
-.podium-rank { font-size: 18px; font-weight: 800; line-height: 1; }
-.podium-rank-1 { color: #f59e0b; }
-.podium-rank-2 { color: var(--text2); }
-.podium-rank-3 { color: #ea580c; }
-.rank-tabs { display: flex; border-bottom: 1px solid var(--line2); background: var(--bg); position: sticky; top: var(--nav); z-index: 10; }
-.rank-tab { flex: 1; height: 38px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: var(--text3); cursor: pointer; border-bottom: 2px solid transparent; transition: color .15s, border-color .15s; letter-spacing: .1px; }
-.rank-tab.active { color: var(--text); border-bottom-color: var(--text); }
-.rank-row { display: flex; align-items: center; gap: 12px; padding: 11px 16px; border-bottom: 1px solid var(--line2); background: var(--bg); }
-.rank-row.is-me { background: var(--accent-l); }
-body.dark-mode .rank-row.is-me { background: rgba(59,130,246,.1); }
-.rank-num { font-size: 13px; font-weight: 700; color: var(--text3); min-width: 22px; text-align: center; flex-shrink: 0; }
-.rank-num.top1 { color: #f59e0b; font-size: 15px; }
-.rank-num.top2 { color: var(--text2); font-size: 14px; }
-.rank-num.top3 { color: #ea580c; font-size: 14px; }
-.rank-row-name { font-size: 13px; font-weight: 600; color: var(--text); min-width: 64px; flex-shrink: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 80px; }
-.rank-row-name.is-me-lbl { color: var(--accent); }
-.rank-row-bar-wrap { flex: 1; }
-.rank-row-bar-track { height: 5px; background: var(--line2); border-radius: 99px; overflow: hidden; }
-.rank-row-bar-fill { height: 100%; border-radius: 99px; transition: width .6s cubic-bezier(.4,0,.2,1); }
-.rank-row-val { font-size: 12px; font-weight: 700; color: var(--text2); min-width: 38px; text-align: right; flex-shrink: 0; }
-.rank-compare-section { padding: 14px 16px; border-bottom: 1px solid var(--line2); }
-.rank-compare-title { font-size: 11px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: .7px; margin-bottom: 10px; }
-.rank-compare-bar-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
-.rank-compare-label { font-size: 11px; color: var(--text2); min-width: 70px; flex-shrink: 0; }
-.rank-compare-track { flex: 1; height: 6px; background: var(--line2); border-radius: 99px; overflow: hidden; }
-.rank-compare-fill { height: 100%; border-radius: 99px; transition: width .6s; }
-.rank-compare-val { font-size: 11px; font-weight: 700; min-width: 34px; text-align: right; }
-.rank-module-row { display: flex; align-items: center; gap: 10px; padding: 10px 16px; border-bottom: 1px solid var(--line2); }
-.rank-module-name { font-size: 12px; font-weight: 600; color: var(--text); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.rank-module-bars { display: flex; flex-direction: column; gap: 3px; min-width: 120px; }
-.rank-module-bar-row { display: flex; align-items: center; gap: 5px; }
-.rank-module-bar-track { flex: 1; height: 4px; background: var(--line2); border-radius: 99px; overflow: hidden; }
-.rank-module-bar-fill { height: 100%; border-radius: 99px; transition: width .5s; }
-.rank-module-bar-label { font-size: 9px; font-weight: 600; min-width: 28px; text-align: right; }
-.rank-loading { text-align: center; padding: 48px 20px; }
-.rank-loading-spin { width: 22px; height: 22px; border: 2px solid var(--line2); border-top-color: var(--accent); border-radius: 50%; animation: spin .7s linear infinite; margin: 0 auto 12px; }
-.rank-loading-text { font-size: 13px; color: var(--text3); }
-.rank-error-title { font-size: 14px; font-weight: 600; color: var(--text2); margin-bottom: 8px; text-align: center; }
-.rank-error-desc { font-size: 12px; color: var(--text3); line-height: 1.5; text-align: center; }
-.rank-rule-box { margin: 12px 16px 0; background: var(--bg3); border: 1px solid var(--line2); border-radius: 8px; padding: 12px 14px; }
-.rank-rule-box pre { font-size: 11px; color: var(--text2); overflow-x: auto; white-space: pre; line-height: 1.6; }
-.rank-updated { padding: 10px 16px; font-size: 11px; color: var(--text3); text-align: center; border-top: 1px solid var(--line2); }
-
-.guide-overlay {
-  position: fixed; inset: 0; z-index: 1100;
-  background: rgba(0,0,0,.5); opacity: 0; pointer-events: none;
-  transition: opacity .25s;
-}
-.guide-overlay.show { opacity: 1; pointer-events: all; }
-
-.guide-sheet {
-  position: fixed; bottom: 0; left: 50%;
-  transform: translateX(-50%) translateY(100%);
-  width: 100%; max-width: var(--max);
-  background: var(--bg); border-radius: 14px 14px 0 0;
-  max-height: 92svh; display: flex; flex-direction: column;
-  transition: transform .32s cubic-bezier(.32,0,.2,1);
-  z-index: 1200;
-}
-.guide-sheet.open { transform: translateX(-50%) translateY(0); }
-
-.guide-drag { flex-shrink: 0; padding: 10px 0 0; display: flex; justify-content: center; cursor: grab; }
-.guide-drag-bar { width: 36px; height: 4px; background: var(--line); border-radius: 99px; }
-
-.guide-hdr {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 12px 16px 14px; border-bottom: 1px solid var(--line2); flex-shrink: 0;
-}
-.guide-hdr-title { font-size: 15px; font-weight: 700; color: var(--text); letter-spacing: -.2px; }
-.guide-hdr-close {
-  width: 30px; height: 30px; border-radius: 50%; background: var(--bg3);
-  display: flex; align-items: center; justify-content: center;
-  color: var(--text2); font-size: 18px; font-weight: 300; line-height: 1;
-}
-
-.guide-body { overflow-y: auto; flex: 1; -webkit-overflow-scrolling: touch; padding-bottom: 24px; }
-
-.guide-section { border-bottom: 1px solid var(--line2); padding: 16px 16px 14px; }
-.guide-section:last-child { border-bottom: none; }
-
-.guide-section-title {
-  font-size: 11px; font-weight: 700; color: var(--text3);
-  text-transform: uppercase; letter-spacing: .8px; margin-bottom: 10px;
-  display: flex; align-items: center; gap: 8px;
-}
-.guide-section-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
-
-.guide-row { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 8px; }
-.guide-row:last-child { margin-bottom: 0; }
-.guide-row-label {
-  flex-shrink: 0; min-width: 72px; font-size: 11px; font-weight: 600;
-  color: var(--text2); padding-top: 1px; letter-spacing: .1px;
-}
-.guide-row-desc { font-size: 13px; color: var(--text); line-height: 1.5; }
-
-.guide-tag {
-  display: inline-block; font-size: 10px; font-weight: 700;
-  padding: 2px 7px; border-radius: 5px; letter-spacing: .2px;
-  border: 1px solid; margin-right: 4px; vertical-align: middle;
-}
-.guide-tag-blue  { color: var(--accent);  border-color: rgba(0,149,246,.3);  background: var(--accent-l); }
-.guide-tag-green { color: var(--green);   border-color: rgba(30,159,94,.3);  background: var(--green-l); }
-.guide-tag-purple{ color: var(--purple);  border-color: rgba(147,51,234,.3); background: rgba(147,51,234,.08); }
-.guide-tag-red   { color: #dc2626;        border-color: rgba(220,38,38,.3);  background: rgba(220,38,38,.07); }
-.guide-tag-orange{ color: #d97706;        border-color: rgba(245,158,11,.3); background: rgba(245,158,11,.08); }
-
-@media (min-width: 768px) {
-  .guide-sheet {
-    bottom: auto; top: 50%; left: 50%;
-    transform: translateX(-50%) translateY(calc(-50% + 40px));
-    width: min(600px, 90vw); border-radius: 14px;
-    max-height: 85svh; opacity: 0;
-    transition: transform .28s cubic-bezier(.32,0,.2,1), opacity .22s;
+  :root {
+    --max: 1100px;
+    --bot: 0px;
+    --nav: 58px;
+    --sidebar: 240px;
   }
-  .guide-sheet.open { transform: translateX(-50%) translateY(-50%); opacity: 1; }
-  .guide-drag { display: none; }
+
+  body {
+    max-width: 100%;
+    padding-bottom: 0;
+    background: var(--bg2);
+  }
+
+  /* ── Auth screen desktop ── */
+  #auth-screen {
+    background: var(--bg2);
+  }
+  .auth-box {
+    box-shadow: 0 8px 40px rgba(0,0,0,0.10);
+  }
+
+  /* ── App wrapper: sidebar + content ── */
+  #app-wrapper {
+    display: grid !important;
+    grid-template-columns: var(--sidebar) 1fr;
+    grid-template-rows: var(--nav) 1fr;
+    max-width: var(--max);
+    margin: 0 auto;
+    min-height: 100svh;
+    background: var(--bg);
+    box-shadow: 0 0 60px rgba(0,0,0,0.08);
+  }
+
+  /* Topbar: full width */
+  .topbar {
+    grid-column: 1 / -1;
+    grid-row: 1;
+    height: var(--nav);
+    padding: 0 24px;
+  }
+  .topbar-title { font-size: 17px; }
+
+  /* ── Sidebar (was bottom nav) ── */
+  .botnav {
+    grid-column: 1;
+    grid-row: 2;
+    position: sticky;
+    top: var(--nav);
+    height: calc(100svh - var(--nav));
+    left: auto;
+    transform: none;
+    width: auto;
+    max-width: none;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    padding: 16px 12px 20px;
+    border-top: none;
+    border-right: 1px solid var(--line);
+    gap: 4px;
+    overflow: hidden;
+  }
+
+  /* Sidebar label on top */
+  .botnav::before {
+    content: 'NAVIGATION';
+    display: block;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text3);
+    letter-spacing: 1px;
+    padding: 0 14px 10px;
+    border-bottom: 1px solid var(--line2);
+    margin-bottom: 8px;
+  }
+
+  /* Sidebar user card at bottom */
+  .botnav::after {
+    content: '';
+    flex: 1;
+  }
+
+  .bnav {
+    flex-direction: row;
+    justify-content: flex-start;
+    height: 44px;
+    flex: none;
+    padding: 0 14px;
+    border-radius: 10px;
+    gap: 12px;
+    transition: background .15s, color .15s;
+  }
+  .bnav:hover { background: var(--bg3); }
+  .bnav span  { font-size: 14px; font-weight: 500; }
+  .bnav svg   { width: 20px; height: 20px; flex-shrink: 0; }
+
+  .bnav.active              { background: var(--accent-l); }
+  .bnav.active svg,
+  .bnav.active span         { color: var(--accent); }
+
+  /* ── Content area ── */
+  #pages-wrap {
+    grid-column: 2;
+    grid-row: 2;
+    overflow-y: auto;
+    height: calc(100svh - var(--nav));
+    background: var(--bg);
+  }
+
+  /* ── Welcome card on desktop ── */
+  .welcome-section { padding: 20px 24px 0; }
+  .welcome-card { border-radius: 20px; padding: 24px 28px; }
+  .motivation-strip { margin: 14px 24px 0; border-radius: 12px; }
+
+  /* ── Profile section ── */
+  .profile { padding: 20px 24px 18px; }
+  .profile-row { gap: 32px; margin-bottom: 16px; }
+
+  /* ── Module grid: 4 columns ── */
+  .mod-grid { grid-template-columns: repeat(4, 1fr); }
+
+  /* ── List view ── */
+  .mrow { padding: 12px 24px; }
+
+  /* ── Search page ── */
+  .search-pg { padding: 14px 24px 0; }
+  .search-inp { height: 40px; font-size: 15px; }
+
+  /* ── Stats: 3 columns ── */
+  .stats-kpis { grid-template-columns: 1fr 1fr 1fr; }
+  .skpi.wide  { grid-column: 1 / -1; }
+  .stats-profile { padding: 22px 24px 18px; }
+
+  /* ── Section labels ── */
+  .stats-sec-lbl { padding: 16px 24px 8px; }
+  .smod-item     { padding: 12px 24px; }
+
+  /* ── Sheet → centered modal on desktop ── */
+  .sheet {
+    bottom: auto;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%) translateY(calc(-50% + 30px));
+    width: min(680px, 88vw);
+    max-width: 680px;
+    border-radius: 16px;
+    max-height: 82svh;
+    opacity: 0;
+    transition: transform .28s cubic-bezier(.32,0,.2,1), opacity .22s;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.18);
+  }
+  .sheet.open {
+    transform: translateX(-50%) translateY(-50%);
+    opacity: 1;
+  }
+  .sheet-drag { display: none; }
+
+  /* ── Dua page ── */
+  .dua-pg { padding: 24px; max-width: 600px; }
+
+  /* ── View bar ── */
+  .view-bar { padding: 0 8px; }
 }
+
+/* ═══════════════════════════════════════════════
+   GRAND ÉCRAN  ≥ 1200 px
+═══════════════════════════════════════════════ */
+@media (min-width: 1200px) {
+  :root { --max: 1280px; --sidebar: 260px; }
+
+  #app-wrapper { grid-template-columns: var(--sidebar) 1fr; }
+  .mod-grid    { grid-template-columns: repeat(5, 1fr); }
+  .stats-kpis  { grid-template-columns: repeat(3, 1fr); }
+
+  .welcome-section { padding: 24px 32px 0; }
+  .motivation-strip { margin: 16px 32px 0; }
+  .mrow { padding: 12px 32px; }
+  .search-pg { padding: 16px 32px 0; }
+  .stats-sec-lbl { padding: 16px 32px 8px; }
+  .smod-item { padding: 12px 32px; }
+}
+
+/* ═══════════════════════════════════════════════
+   INSTALL BANNER
+═══════════════════════════════════════════════ */
+/* ── INSTALL BANNER ── */
+#install-banner,
+#ios-banner {
+  position: fixed;
+  top: calc(var(--nav) + 10px);
+  left: 50%;
+  transform: translateX(-50%) translateY(-20px);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 9990;
+  width: calc(100% - 32px);
+  max-width: 440px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+  transition: transform 0.35s cubic-bezier(0.34,1.4,0.64,1), opacity 0.3s ease;
+}
+#install-banner.show,
+#ios-banner.show {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+  pointer-events: all;
+}
+#install-banner {
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+#ios-banner {
+  padding: 14px 16px 16px;
+}
+.ib-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--accent) 0%, #0077cc 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 22px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.5px;
+  box-shadow: 0 3px 10px rgba(0,149,246,0.3);
+}
+.ib-text {
+  flex: 1;
+  min-width: 0;
+}
+.ib-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 2px;
+}
+.ib-sub {
+  font-size: 11px;
+  color: var(--text2);
+  line-height: 1.4;
+}
+.ib-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  flex-shrink: 0;
+}
+.ib-btn-install {
+  height: 34px;
+  padding: 0 16px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  transition: opacity .12s;
+  white-space: nowrap;
+}
+.ib-btn-install:active { opacity: .8; }
+.ib-btn-close {
+  height: 26px;
+  padding: 0 10px;
+  background: var(--bg3);
+  color: var(--text2);
+  border: none;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background .12s;
+}
+.ib-btn-close:active { background: var(--line); }
+
+/* iOS-specific steps */
+.ios-banner-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.ios-banner-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+}
+.ios-banner-close {
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  background: var(--bg3);
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  color: var(--text2);
+  display: flex; align-items: center; justify-content: center;
+  font-family: inherit;
+}
+.ios-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.ios-step {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  color: var(--text2);
+  line-height: 1.4;
+}
+.ios-step-num {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.ios-step strong { color: var(--text); }
 </style>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
 </head>
 <body>
+
+<!-- ══ BANNER INSTALLATION (Android / Chrome) ══ -->
+<div id="install-banner">
+  <div class="ib-icon">R</div>
+  <div class="ib-text">
+    <div class="ib-title">Installer l'application</div>
+    <div class="ib-sub">Accès rapide, fonctionne hors-ligne</div>
+  </div>
+  <div class="ib-actions">
+    <button class="ib-btn-install" onclick="triggerInstall()">Installer</button>
+    <button class="ib-btn-close" onclick="dismissInstall()">Plus tard</button>
+  </div>
+</div>
+
+<!-- ══ BANNER INSTALLATION (iOS Safari) ══ -->
+<div id="ios-banner">
+  <div class="ios-banner-top">
+    <span class="ios-banner-title">📲 Installer sur votre iPhone</span>
+    <button class="ios-banner-close" onclick="dismissIos()">×</button>
+  </div>
+  <div class="ios-steps">
+    <div class="ios-step">
+      <div class="ios-step-num">1</div>
+      <span>Appuyez sur <strong>Partager</strong> <span style="font-size:14px">⎋</span> en bas de Safari</span>
+    </div>
+    <div class="ios-step">
+      <div class="ios-step-num">2</div>
+      <span>Sélectionnez <strong>« Sur l'écran d'accueil »</strong></span>
+    </div>
+    <div class="ios-step">
+      <div class="ios-step-num">3</div>
+      <span>Appuyez sur <strong>Ajouter</strong> — c'est prêt !</span>
+    </div>
+  </div>
+</div>
 
 <div id="loading-screen">
   <div class="ls-logo">Résidanat 2026</div>
@@ -518,6 +927,9 @@ body.dark-mode .rank-row.is-me { background: rgba(59,130,246,.1); }
       </div>
       <button class="auth-btn" id="login-btn" onclick="authLogin()">Se connecter</button>
       <div class="auth-msg" id="login-msg"></div>
+      <div style="text-align:center;margin-top:10px;">
+        <button onclick="authForgotPassword()" style="background:none;border:none;font-size:12px;color:var(--accent);cursor:pointer;font-family:inherit;padding:4px;">Mot de passe oublié ?</button>
+      </div>
     </div>
     <div class="auth-panel" id="auth-panel-register">
       <div class="auth-field">
@@ -536,12 +948,9 @@ body.dark-mode .rank-row.is-me { background: rgba(59,130,246,.1); }
 </div>
 
 <div id="app-wrapper" style="display:none;">
-<nav class="topbar">
+<nav class="topbar header-bg">
   <span class="topbar-title">Residanat 2026</span>
   <div class="topbar-actions">
-    <button class="icon-btn" onclick="openGuide()" title="Guide d'utilisation">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-    </button>
     <button class="icon-btn" onclick="toggleDark()" title="Mode Sombre/Clair">
       <svg id="icon-moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
       <svg id="icon-sun" style="display:none;" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
@@ -555,28 +964,12 @@ body.dark-mode .rank-row.is-me { background: rgba(59,130,246,.1); }
   </div>
 </nav>
 
-<input type="file" id="photo-input" accept="image/*" onchange="handlePhotoUpload(event)" style="display:none">
-
-<!-- RENAME MODAL -->
-<div id="rename-overlay" onclick="if(event.target===this)closeRenameModal()" style="display:none;position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,.5);align-items:center;justify-content:center;padding:20px;">
-  <div style="background:var(--bg);border-radius:14px;width:100%;max-width:340px;padding:20px;box-shadow:0 8px 32px rgba(0,0,0,.18);">
-    <div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:6px;">Votre pseudo dans le classement</div>
-    <div style="font-size:12px;color:var(--text2);margin-bottom:14px;">Visible par tous les participants. Max 20 caractères.</div>
-    <input id="rename-inp" maxlength="20" placeholder="Ex: Dr. Karim, MedStudent..." 
-      style="width:100%;height:42px;background:var(--bg3);border:1.5px solid var(--line);border-radius:10px;padding:0 12px;font-size:14px;color:var(--text);outline:none;font-family:inherit;transition:border-color .15s;"
-      onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--line)'"
-      onkeydown="if(event.key==='Enter')confirmRename()">
-    <div style="display:flex;gap:8px;margin-top:14px;">
-      <button onclick="closeRenameModal()" style="flex:1;height:38px;border:1px solid var(--line);border-radius:9px;font-size:13px;font-weight:600;color:var(--text2);background:none;cursor:pointer;font-family:inherit;">Annuler</button>
-      <button onclick="confirmRename()" style="flex:1;height:38px;background:var(--accent);border-radius:9px;font-size:13px;font-weight:700;color:#fff;border:none;cursor:pointer;font-family:inherit;">Enregistrer</button>
-    </div>
-  </div>
-</div>
+<!-- Hidden file input for photo upload -->
+<input type="file" id="photo-input" accept="image/*" onchange="handlePhotoUpload(event)">
 
 <div id="pages-wrap">
-<!-- PAGE: HOME -->
 <div id="page-home" class="page active">
-  <div id="home-profile"></div>
+  <div class="profile header-bg" id="home-profile"></div>
   <div class="view-bar">
     <div class="vtab active" id="vtab-grid" onclick="setView('grid',this)">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="7" height="7" rx=".5"/><rect x="14" y="3" width="7" height="7" rx=".5"/><rect x="3" y="14" width="7" height="7" rx=".5"/><rect x="14" y="14" width="7" height="7" rx=".5"/></svg>
@@ -588,89 +981,45 @@ body.dark-mode .rank-row.is-me { background: rgba(59,130,246,.1); }
   <div id="mod-area"></div>
 </div>
 
-<!-- PAGE: SEARCH -->
 <div id="page-search" class="page">
-  <div class="profile-banner">
-    <img class="profile-banner-img" src="D.jpg" alt="">
-    <div class="profile-banner-overlay"></div>
+  <div class="search-pg">
+    <div class="search-wrap">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input class="search-inp" id="search-inp" type="search" placeholder="Rechercher..." autocomplete="off" spellcheck="false">
+    </div>
+    <div class="sf-row">
+      <button class="sfpill active" onclick="setSF('all',this)">Tous</button>
+      <button class="sfpill" onclick="setSF('todo',this)">À faire</button>
+      <button class="sfpill" onclick="setSF('done',this)">Terminés</button>
+      <button class="sfpill" onclick="setSF('facile',this)">Facile</button>
+      <button class="sfpill" onclick="setSF('moyen',this)">Moyen</button>
+      <button class="sfpill" onclick="setSF('difficile',this)">Difficile</button>
+      <button class="sfpill" onclick="setSF('hq',this)">⭐ Qualité max</button>
+    </div>
+    <div id="search-res"></div>
   </div>
-  <div class="profile-inner" style="border-bottom:1px solid var(--line); padding-bottom:12px;">
-    <div class="profile-avatar-wrap" style="margin-bottom:0;">
-      <div class="profile-avatar" style="border-color:var(--bg); background:var(--bg3); display:flex; align-items:center; justify-content:center; color:#f59e0b;">
-        <svg class="icon-avatar" width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      </div>
-      <div style="flex:1;"></div>
-    </div>
-    <div class="profile-name" style="margin-top:10px;">Recherche</div>
-    <div class="profile-bio">Trouvez rapidement un module ou cours</div>
-
-    <div class="search-wrap" style="margin-top:16px; position:relative;">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="position:absolute; left:14px; top:50%; transform:translateY(-50%); color:var(--text3);"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      <input class="search-inp" id="search-inp" type="search" placeholder="Tapez votre recherche..." autocomplete="off" spellcheck="false">
-    </div>
-    <div class="sheet-pills" style="margin-top:12px; padding:0; border:none;">
-      <button class="spill active" onclick="setSF('all',this)">Tous</button>
-      <button class="spill" onclick="setSF('todo',this)">À faire</button>
-      <button class="spill" onclick="setSF('done',this)">Terminés</button>
-      <button class="spill" onclick="setSF('facile',this)">Facile</button>
-      <button class="spill" onclick="setSF('moyen',this)">Moyen</button>
-      <button class="spill" onclick="setSF('difficile',this)">Difficile</button>
-      <button class="spill" onclick="setSF('hq',this)">Qual max</button>
-    </div>
-  </div>
-  <div id="search-res"></div>
 </div>
 
-<!-- PAGE: STATS -->
 <div id="page-stats" class="page">
   <div id="stats-pg"></div>
 </div>
 
-<!-- PAGE: CLASSEMENT -->
-<div id="page-classement" class="page">
-  <div class="profile-banner">
-    <img class="profile-banner-img" src="D.jpg" alt="">
-    <div class="profile-banner-overlay"></div>
-  </div>
-  <div class="profile-inner" style="border-bottom:1px solid var(--line);">
-    <div class="profile-avatar-wrap">
-      <div class="profile-avatar" style="border-color:var(--bg); background:var(--bg3); display:flex; align-items:center; justify-content:center; color:#f59e0b;">
-        <svg class="icon-avatar" width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="8 6 12 2 16 6"/><line x1="12" y1="2" x2="12" y2="15"/><path d="M20 21H4"/><path d="M4 21V10l4-2"/><path d="M20 21V10l-4-2"/></svg>
-      </div>
-    </div>
-    <div class="profile-name">Classement</div>
-    <div class="profile-bio">Comparaison anonyme entre tous les utilisateurs</div>
-  </div>
-  <div id="classement-pg">
-    <div class="rank-loading"><div class="rank-loading-spin"></div><div class="rank-loading-text">Chargement...</div></div>
-  </div>
-</div>
-
-<!-- PAGE: DOAA -->
 <div id="page-dua" class="page">
-  <div class="profile-banner">
-    <img class="profile-banner-img" src="D.jpg" alt="">
-    <div class="profile-banner-overlay"></div>
-  </div>
-  <div class="profile-inner" style="border-bottom:1px solid var(--line);">
-    <div class="profile-avatar-wrap">
-      <div class="profile-avatar" style="border-color:var(--bg); background:var(--bg3); display:flex; align-items:center; justify-content:center; color:var(--green);">
-        <svg class="icon-avatar" width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z"/></svg>
+  <div class="dua-pg">
+    <div class="dua-card">
+      <div class="dua-top">
+        <div class="dua-lbl">Doaa pour le développeur</div>
+        <div class="dua-arabic">اللَّهُمَّ اغْفِرْ لِمَنْ صَنَعَ هَذَا التَّطْبِيقَ،<br>وَكَفِّرْ عَنْهُ ذُنُوبَهُ وَسَيِّئَاتِهِ،<br>وَاجْعَلْ عَمَلَهُ هَذَا فِي مِيزَانِ حَسَنَاتِهِ،<br>يَوْمَ لَا يَنْفَعُ مَالٌ وَلَا بَنُونَ إِلَّا مَنْ أَتَى اللَّهَ بِقَلْبٍ سَلِيمٍ</div>
+      </div>
+      <div class="dua-bottom">
+        <div class="dua-trans">O Allah, pardonne à celui qui a créé cette application, efface ses fautes et ses péchés, et place cette œuvre dans la balance de ses bonnes actions, au Jour où ni richesse ni enfants ne seront utiles — sauf celui qui vient à Allah avec un cœur sain.</div>
+        <div class="dua-amin">آمِينَ يَا رَبَّ الْعَالَمِينَ</div>
       </div>
     </div>
-    <div class="profile-name">Doaa</div>
-    <div class="profile-bio">Soutien spirituel pour le développeur</div>
   </div>
-  <div style="padding: 32px 20px;">
-    <div style="font-size: 26px; line-height: 1.8; text-align: center; color: var(--text); margin-bottom: 32px; font-family: 'Amiri', 'Traditional Arabic', serif; direction: rtl;">اللَّهُمَّ اغْفِرْ لِمَنْ صَنَعَ هَذَا التَّطْبِيقَ،<br>وَكَفِّرْ عَنْهُ ذُنُوبَهُ وَسَيِّئَاتِهِ،<br>وَاجْعَلْ عَمَلَهُ هَذَا فِي مِيزَانِ حَسَنَاتِهِ،<br>يَوْمَ لَا يَنْفَعُ مَالٌ وَلَا بَنُونَ إِلَّا مَنْ أَتَى اللَّهَ بِقَلْبٍ سَلِيمٍ</div>
-    <div style="height:1px; background:var(--line2); margin: 0 auto 32px; width: 60%;"></div>
-    <div style="font-size: 14px; line-height: 1.6; text-align: center; color: var(--text2); margin-bottom: 24px;">O Allah, pardonne à celui qui a créé cette application, efface ses fautes et ses péchés, et place cette œuvre dans la balance de ses bonnes actions, au Jour où ni richesse ni enfants ne seront utiles — sauf celui qui vient à Allah avec un cœur sain.</div>
-    <div style="font-size: 22px; text-align: center; color: var(--green); font-family: 'Amiri', serif; font-weight: bold;">آمِينَ يَا رَبَّ الْعَالَمِينَ</div>
-  </div>
-</div>
-</div>
+</div><!-- /page-dua -->
+</div><!-- /pages-wrap -->
 
-<!-- OVERLAY + SHEET -->
 <div class="overlay" id="overlay" onclick="closeSheet()"></div>
 <div class="sheet" id="sheet">
   <div class="sheet-drag" id="sheet-drag"><div class="sheet-drag-bar"></div></div>
@@ -684,7 +1033,6 @@ body.dark-mode .rank-row.is-me { background: rgba(59,130,246,.1); }
   <div class="sheet-body" id="sheet-body"></div>
 </div>
 
-<!-- BOTTOM NAV -->
 <nav class="botnav">
   <div class="bnav active" id="bnav-home" onclick="showPage('home',this)">
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9L12 2l9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
@@ -696,11 +1044,7 @@ body.dark-mode .rank-row.is-me { background: rgba(59,130,246,.1); }
   </div>
   <div class="bnav" id="bnav-stats" onclick="showPage('stats',this)">
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-    <span>Stats</span>
-  </div>
-  <div class="bnav" id="bnav-classement" onclick="showPage('classement',this)">
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="8 6 12 2 16 6"/><line x1="12" y1="2" x2="12" y2="15"/><path d="M20 21H4"/><path d="M4 21V10l4-2"/><path d="M20 21V10l-4-2"/></svg>
-    <span>Classement</span>
+    <span>Statistiques</span>
   </div>
   <div class="bnav" id="bnav-dua" onclick="showPage('dua',this)">
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z"/></svg>
@@ -708,161 +1052,9 @@ body.dark-mode .rank-row.is-me { background: rgba(59,130,246,.1); }
   </div>
 </nav>
 
-<!-- GUIDE MODAL -->
-<div class="guide-overlay" id="guide-overlay" onclick="closeGuide()"></div>
-<div class="guide-sheet" id="guide-sheet">
-  <div class="guide-drag" id="guide-drag"><div class="guide-drag-bar"></div></div>
-  <div class="guide-hdr">
-    <span class="guide-hdr-title">Guide d'utilisation</span>
-    <button class="guide-hdr-close" onclick="closeGuide()">&#x2715;</button>
-  </div>
-  <div class="guide-body">
-
-    <div class="guide-section">
-      <div class="guide-section-title">
-        <div class="guide-section-dot" style="background:var(--accent)"></div>
-        Accueil
-      </div>
-      <div class="guide-row">
-        <div class="guide-row-label">Vue grille</div>
-        <div class="guide-row-desc">Affiche tous les modules sous forme de cases avec un anneau de progression circulaire.</div>
-      </div>
-      <div class="guide-row">
-        <div class="guide-row-label">Vue liste</div>
-        <div class="guide-row-desc">Affiche les modules en lignes avec le détail des pourcentages de complétion.</div>
-      </div>
-      <div class="guide-row">
-        <div class="guide-row-label">Ouvrir</div>
-        <div class="guide-row-desc">Appuyer sur un module pour afficher ses cours dans un panneau.</div>
-      </div>
-    </div>
-
-    <div class="guide-section">
-      <div class="guide-section-title">
-        <div class="guide-section-dot" style="background:var(--green)"></div>
-        Dans un cours
-      </div>
-      <div class="guide-row">
-        <div class="guide-row-label">Terminer</div>
-        <div class="guide-row-desc">Cocher le cercle à gauche marque le cours comme terminé.</div>
-      </div>
-      <div class="guide-row">
-        <div class="guide-row-label">Difficulté</div>
-        <div class="guide-row-desc">
-          <span class="guide-tag" style="color:#16a34a;border-color:rgba(22,163,74,.3);background:#f0fdf4;">Facile</span>
-          <span class="guide-tag" style="color:#ea580c;border-color:rgba(234,88,12,.3);background:#fff7ed;">Moyen</span>
-          <span class="guide-tag guide-tag-red">Difficile</span>
-          — permet de filtrer et prioriser.
-        </div>
-      </div>
-      <div class="guide-row">
-        <div class="guide-row-label">QCM</div>
-        <div class="guide-row-desc">Les badges <span class="guide-tag guide-tag-blue">Cycle</span><span class="guide-tag guide-tag-blue">Résidanat</span><span class="guide-tag guide-tag-blue">MyQCM</span> permettent de noter le score sur 5 points pour chaque source.</div>
-      </div>
-      <div class="guide-row">
-        <div class="guide-row-label">Révision</div>
-        <div class="guide-row-desc">Le badge <span class="guide-tag guide-tag-purple">Révision</span> permet de noter le nombre de passages sur un cours (jusqu'à 4 fois).</div>
-      </div>
-      <div class="guide-row">
-        <div class="guide-row-label">Notes</div>
-        <div class="guide-row-desc">L'icône stylo ouvre un champ de texte libre pour ajouter des annotations personnelles.</div>
-      </div>
-      <div class="guide-row">
-        <div class="guide-row-label">Qualité</div>
-        <div class="guide-row-desc">Les étoiles mesurent la qualité d'étude perçue sur 5 — visible dans les stats globales.</div>
-      </div>
-    </div>
-
-    <div class="guide-section">
-      <div class="guide-section-title">
-        <div class="guide-section-dot" style="background:var(--text3)"></div>
-        Page Stats
-      </div>
-      <div class="guide-row">
-        <div class="guide-row-label">Indicateurs</div>
-        <div class="guide-row-desc">Avancement global, révisions manuelles, score QCM moyen, qualité d'étude et cours difficiles — par module et au total.</div>
-      </div>
-    </div>
-
-    <div class="guide-section">
-      <div class="guide-section-title">
-        <div class="guide-section-dot" style="background:#f59e0b"></div>
-        Recherche
-      </div>
-      <div class="guide-row">
-        <div class="guide-row-label">Filtres</div>
-        <div class="guide-row-desc">Filtrer par statut (à faire, terminés) ou par niveau de difficulté. La recherche textuelle fonctionne sur les noms de cours et de modules.</div>
-      </div>
-    </div>
-
-    <div class="guide-section">
-      <div class="guide-section-title">
-        <div class="guide-section-dot" style="background:#f59e0b"></div>
-        Classement
-      </div>
-      <div class="guide-row">
-        <div class="guide-row-label">Principe</div>
-        <div class="guide-row-desc">Compare votre progression avec tous les utilisateurs actifs en temps réel. Seuls les participants ayant au moins un cours terminé apparaissent.</div>
-      </div>
-      <div class="guide-row">
-        <div class="guide-row-label">Onglets</div>
-        <div class="guide-row-desc">
-          <span class="guide-tag guide-tag-blue">Avancement</span> % de cours terminés.
-          <span class="guide-tag guide-tag-green">QCM</span> score moyen aux QCM.
-          <span class="guide-tag guide-tag-orange">Modules</span> comparaison détaillée module par module.
-        </div>
-      </div>
-      <div class="guide-row">
-        <div class="guide-row-label">Votre carte</div>
-        <div class="guide-row-desc">En haut du classement, votre rang, pseudo et métriques sont affichés. Appuyez sur ✏️ pour choisir un pseudo visible par tous.</div>
-      </div>
-      <div class="guide-row">
-        <div class="guide-row-label">Anonymat</div>
-        <div class="guide-row-desc">Les autres concurrents sans pseudo apparaissent comme "Conc. 1", "Conc. 2"… Votre ligne est mise en évidence en bleu.</div>
-      </div>
-    </div>
-
-    <div class="guide-section" style="border-bottom:none;">
-      <div class="guide-section-title">
-        <div class="guide-section-dot" style="background:var(--text3)"></div>
-        Général
-      </div>
-      <div class="guide-row">
-        <div class="guide-row-label">Sync</div>
-        <div class="guide-row-desc">Toute la progression est sauvegardée automatiquement sur Firebase et accessible depuis n'importe quel appareil avec le même compte.</div>
-      </div>
-      <div class="guide-row">
-        <div class="guide-row-label">Mode sombre</div>
-        <div class="guide-row-desc">Basculer via l'icône lune/soleil dans la barre supérieure.</div>
-      </div>
-      <div class="guide-row">
-        <div class="guide-row-label">Réinitialiser</div>
-        <div class="guide-row-desc">L'icône de rechargement en haut efface toute la progression après confirmation.</div>
-      </div>
-    </div>
-
-  </div>
-</div>
-
 <script>
 const MAX=5;
-
-function openGuide(){
-  document.getElementById('guide-overlay').classList.add('show');
-  document.getElementById('guide-sheet').classList.add('open');
-  document.body.style.overflow='hidden';
-}
-function closeGuide(){
-  document.getElementById('guide-overlay').classList.remove('show');
-  document.getElementById('guide-sheet').classList.remove('open');
-  document.body.style.overflow='';
-}
-// Swipe down to close guide
-let _gy0=0;
-document.getElementById('guide-drag').addEventListener('touchstart',e=>{_gy0=e.touches[0].clientY;},{passive:true});
-document.getElementById('guide-drag').addEventListener('touchend',e=>{if(e.changedTouches[0].clientY-_gy0>55)closeGuide();},{passive:true});
 const QT={cycle:'Cycle',resid:'Résidanat',myqcm:'MyQCM'};
-
 const DATA=[
   {id:'anapath',name:'Anatomie Pathologique',qcm:['cycle','resid'],courses:['Processus inflammatoire','Generalites sur les tumeurs','Progression du KC','Tissu Cancereux','Tumeurs Benignes','Tmr epitheliale Malpighienne','Tmr epitheliales glandulaires','Tmr mesenchymateuse','Lymphome','Tumeurs Nerveuses','Tumeurs Melanocytaires','Tumeurs Embryonnaires','Pathologies vasculaires','Atherosclerose','Embolie','Ischemie et Infarctus','Thrombose','Vascularites']},
   {id:'genetique',name:'Genetique',qcm:['cycle','resid'],courses:['Acide nucleique','Chromatine','Genes','Replication de l\'ADN','Transcription de l\'ADN','Traduction ARN','Caryotype et anomalies']},
@@ -922,32 +1114,32 @@ const kX=(m,i)=>`x_${m}_${i}`;
 const kQl=(m,i)=>`ql_${m}_${i}`;
 const kLv=(m,i)=>`lv_${m}_${i}`;
 const MAXQ=3;
-const MAX_REV=4;
-const LVL_DATA=[{lbl:'—',cls:'lvl0'},{lbl:'Facile',cls:'lvl1'},{lbl:'Moyen',cls:'lvl2'},{lbl:'Difficile',cls:'lvl3'}];
+const LVL_DATA=[
+  {lbl:'—',cls:'lvl0'},
+  {lbl:'Facile',cls:'lvl1'},
+  {lbl:'Moyen',cls:'lvl2'},
+  {lbl:'Difficile',cls:'lvl3'}
+];
 let S={};
 let currentUser = null;
 let fbAuth = null;
 let fbDb = null;
-let fbStorage = null;
 let saveTimer = null;
 let currentUsersCount = null;
-let userDisplayName = '';
 
 const load = async () => {
   if(!currentUser){S={};return;}
-  try{ 
-    const doc = await fbDb.collection('progress_v2').doc(currentUser.uid).get(); 
-    S = doc.exists ? (doc.data().state || {}) : {}; 
-    userDisplayName = doc.exists ? (doc.data().displayName || '') : ''; 
-  }
-  catch(e){ S={}; }
+  try{
+    const doc = await fbDb.collection('progress').doc(currentUser.uid).get();
+    S = doc.exists ? (doc.data().state || {}) : {};
+  }catch(e){ S={}; }
 };
 
 const save = () => {
   if(!currentUser) return;
   clearTimeout(saveTimer);
   saveTimer = setTimeout(async ()=>{
-    try{ await fbDb.collection('progress_v2').doc(currentUser.uid).set({state: S, updatedAt: new Date().toISOString()}, {merge: true}); }
+    try{ await fbDb.collection('progress').doc(currentUser.uid).set({state: S, updatedAt: new Date().toISOString()}); }
     catch(e){ console.warn('save failed',e); }
   }, 1500);
 };
@@ -961,116 +1153,235 @@ function ring(pct,r,sw,clr,sz){
 
 let viewMode='grid',sheetMid=null,sheetFilt='all',searchQ='',searchFilt='all';
 
-// ── PHOTO PROFIL (Firebase Storage) ────────────────────────────────────────
-let userPhotoURL = '';
-
-function getUserPhoto(){ return userPhotoURL; }
-
-async function loadUserPhoto(){
-  if(!currentUser) return;
-  try {
-    const doc = await fbDb.collection('profiles').doc(currentUser.uid).get();
-    if(doc.exists && doc.data().photoURL){
-      userPhotoURL = doc.data().photoURL;
-      renderProfile();
-    }
-  } catch(e){ console.warn('Photo load:', e); }
+/* ══════════════════════════════════════
+   PHOTO UPLOAD
+══════════════════════════════════════ */
+function getUserPhotoKey(){
+  return currentUser ? `res9_photo_${currentUser.uid}` : 'res9_photo_guest';
 }
-
+function getUserPhoto(){
+  try { return localStorage.getItem(getUserPhotoKey()) || ''; } catch(e){ return ''; }
+}
 function handlePhotoUpload(event){
-  const file = event.target.files[0]; if(!file || !currentUser) return;
-  event.target.value = '';
-
-  const avatarInner = document.querySelector('.profile-avatar-inner');
-  if(avatarInner) avatarInner.classList.add('uploading');
-
+  const file = event.target.files[0];
+  if(!file) return;
   const reader = new FileReader();
   reader.onload = function(e){
+    const dataUrl = e.target.result;
+    // Compress: draw on canvas max 200x200
     const img = new Image();
     img.onload = function(){
       const canvas = document.createElement('canvas');
       const size = Math.min(img.width, img.height);
-      canvas.width = 300; canvas.height = 300;
+      canvas.width = 200; canvas.height = 200;
       const ctx = canvas.getContext('2d');
-      ctx.save(); ctx.beginPath(); ctx.arc(150,150,150,0,Math.PI*2); ctx.clip();
-      const dx = (img.width - size)/2; const dy = (img.height - size)/2;
-      ctx.drawImage(img, dx, dy, size, size, 0, 0, 300, 300); ctx.restore();
-
-      canvas.toBlob(async (blob) => {
-        try {
-          const ref = fbStorage.ref(`profilePhotos/${currentUser.uid}.jpg`);
-          await ref.put(blob, { contentType: 'image/jpeg' });
-          const url = await ref.getDownloadURL();
-
-          await fbDb.collection('profiles').doc(currentUser.uid).set(
-            { photoURL: url, updatedAt: new Date().toISOString() },
-            { merge: true }
-          );
-
-          userPhotoURL = url;
-          renderProfile();
-        } catch(err){
-          console.error('Upload photo:', err);
-          const ai = document.querySelector('.profile-avatar-inner');
-          if(ai) ai.classList.remove('uploading');
-        }
-      }, 'image/jpeg', 0.82);
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(100,100,100,0,Math.PI*2);
+      ctx.clip();
+      const scale = 200/size;
+      const dx = (img.width - size)/2;
+      const dy = (img.height - size)/2;
+      ctx.drawImage(img, dx, dy, size, size, 0, 0, 200, 200);
+      ctx.restore();
+      const compressed = canvas.toDataURL('image/jpeg', 0.8);
+      try { localStorage.setItem(getUserPhotoKey(), compressed); } catch(e){}
+      renderWelcome();
     };
-    img.src = e.target.result;
+    img.src = dataUrl;
   };
   reader.readAsDataURL(file);
+  // Reset input
+  event.target.value = '';
+}
+function triggerPhotoUpload(){
+  document.getElementById('photo-input').click();
 }
 
-function triggerPhotoUpload(){ document.getElementById('photo-input').click(); }
+/* ══════════════════════════════════════
+   GREETING & MOTIVATION
+══════════════════════════════════════ */
+function getGreeting(){
+  const h = new Date().getHours();
+  if(h >= 5  && h < 12) return {text:'Bonjour', emoji:'☀️'};
+  if(h >= 12 && h < 17) return {text:'Bon après-midi', emoji:'🌤️'};
+  if(h >= 17 && h < 21) return {text:'Bonsoir', emoji:'🌙'};
+  return {text:'Bonne nuit', emoji:'⭐'};
+}
+function getUserDisplayName(){
+  if(!currentUser) return 'Médecin';
+  const email = currentUser.email || '';
+  const name = email.split('@')[0];
+  // Capitalize first letter
+  return name.charAt(0).toUpperCase() + name.slice(1);
+}
+const MOTIVATIONS = [
+  {icon:'🏆', text:'<strong>Chaque cours terminé</strong> te rapproche du résidanat. Continue !'},
+  {icon:'💡', text:'<strong>La régularité</strong> bat toujours l\'intensité. Révise chaque jour.'},
+  {icon:'🧠', text:'<strong>La médecine se construit</strong> brique par brique. Tu es sur la bonne voie.'},
+  {icon:'⚡', text:'<strong>Pas de grand succès</strong> sans petits efforts quotidiens.'},
+  {icon:'🌟', text:'<strong>Tu as choisi la voie difficile.</strong> C\'est pour ça que tu réussiras.'},
+  {icon:'📚', text:'<strong>Chaque page lue</strong> est un pas de plus vers tes futurs patients.'},
+];
+function getDailyMotivation(){
+  const day = new Date().getDate();
+  return MOTIVATIONS[day % MOTIVATIONS.length];
+}
 
-function showAuthScreen(){ document.getElementById('auth-screen').classList.add('show'); }
-function switchAuthTab(tab,el){
+/* ══════════════════════════════════════
+   RENDER WELCOME CARD
+══════════════════════════════════════ */
+function renderWelcome(){
+  const {text, emoji} = getGreeting();
+  const name = getUserDisplayName();
+  const photo = getUserPhoto();
+  const {tot, done, pct} = totals();
+  const mDone = DATA.filter(m=>{const{dc,all}=modStats(m);return dc===all.length&&all.length>0;}).length;
+  const mot = getDailyMotivation();
+
+  // Ring SVG for welcome card (white)
+  const wring = (pct, r, sw, sz) => {
+    const C = 2*Math.PI*r, d = (pct/100*C).toFixed(2);
+    return `<svg width="${sz}" height="${sz}" viewBox="0 0 ${sz} ${sz}"><circle cx="${sz/2}" cy="${sz/2}" r="${r}" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="${sw}"/><circle cx="${sz/2}" cy="${sz/2}" r="${r}" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="${sw}" stroke-linecap="round" stroke-dasharray="${d} ${C.toFixed(2)}" transform="rotate(-90 ${sz/2} ${sz/2})"/></svg>`;
+  };
+
+  const photoHtml = photo
+    ? `<img src="${photo}" alt="Photo">`
+    : `<span>${name.charAt(0).toUpperCase()}</span>`;
+
+  document.getElementById('welcome-area').innerHTML = `
+    <div class="welcome-section">
+      <div class="welcome-card">
+        <div class="wc-photo-wrap" onclick="triggerPhotoUpload()" title="Changer la photo">
+          <div class="wc-photo">${photoHtml}</div>
+          <div class="wc-photo-edit">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+          </div>
+        </div>
+        <div class="wc-info">
+          <div class="wc-greeting">${emoji} ${text} !</div>
+          <div class="wc-name">${name}</div>
+          <div class="wc-badges">
+            <span class="wc-badge">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+              ${done} / ${tot} cours
+            </span>
+            ${mDone > 0 ? `<span class="wc-badge">🎯 ${mDone} module${mDone>1?'s':''} fini${mDone>1?'s':''}</span>` : ''}
+          </div>
+        </div>
+        <div class="wc-ring-wrap">
+          <div style="position:relative;width:52px;height:52px;">
+            <div style="position:absolute;inset:0;">${wring(pct, 22, 3, 52)}</div>
+            <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+              <span style="font-size:13px;font-weight:800;color:#fff;line-height:1;">${pct}%</span>
+              <span style="font-size:8px;color:rgba(255,255,255,0.7);margin-top:1px;">fait</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="motivation-strip">
+      <span class="motivation-icon">${mot.icon}</span>
+      <span class="motivation-text">${mot.text}</span>
+    </div>
+  `;
+}
+
+/* ══════════════════════════════════════
+   FIREBASE AUTH
+══════════════════════════════════════ */
+function showAuthScreen(){
+  document.getElementById('auth-screen').classList.add('show');
+}
+function switchAuthTab(tab, el){
   document.querySelectorAll('.atab').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('.auth-panel').forEach(p=>p.classList.remove('active'));
-  el.classList.add('active'); document.getElementById('auth-panel-'+tab).classList.add('active');
+  el.classList.add('active');
+  document.getElementById('auth-panel-'+tab).classList.add('active');
   document.getElementById(tab==='login'?'login-msg':'reg-msg').textContent='';
 }
 async function authLogin(){
-  const u=document.getElementById('login-user').value.trim().toLowerCase();
-  const p=document.getElementById('login-pass').value;
-  const msg=document.getElementById('login-msg'); const btn=document.getElementById('login-btn');
+  const u = document.getElementById('login-user').value.trim().toLowerCase();
+  const p = document.getElementById('login-pass').value;
+  const msg = document.getElementById('login-msg');
+  const btn = document.getElementById('login-btn');
   if(!u||!p){msg.className='auth-msg err';msg.textContent='Remplissez tous les champs.';return;}
   btn.disabled=true; msg.className='auth-msg'; msg.textContent='Connexion...';
-  try{ await fbAuth.signInWithEmailAndPassword(u,p); }
-  catch(e){
-    btn.disabled=false; msg.className='auth-msg err';
-    const codes={'auth/user-not-found':'Email inconnu.','auth/wrong-password':'Mot de passe incorrect.','auth/invalid-email':'Email invalide.','auth/invalid-credential':'Email ou mot de passe incorrect.','auth/too-many-requests':'Trop de tentatives.'};
-    msg.textContent=codes[e.code]||('Erreur : '+e.message);
+  try{
+    await fbAuth.signInWithEmailAndPassword(u, p);
+  }catch(e){
+    btn.disabled=false;
+    msg.className='auth-msg err';
+    const codes = {
+      'auth/user-not-found':'Email inconnu.',
+      'auth/wrong-password':'Mot de passe incorrect.',
+      'auth/invalid-email':'Email invalide.',
+      'auth/invalid-credential':'Email ou mot de passe incorrect.',
+      'auth/too-many-requests':'Trop de tentatives, réessayez plus tard.'
+    };
+    msg.textContent = codes[e.code] || ('Erreur : '+e.message);
   }
 }
 async function authRegister(){
-  const u=document.getElementById('reg-user').value.trim().toLowerCase();
-  const p=document.getElementById('reg-pass').value;
-  const msg=document.getElementById('reg-msg'); const btn=document.getElementById('reg-btn');
+  const u = document.getElementById('reg-user').value.trim().toLowerCase();
+  const p = document.getElementById('reg-pass').value;
+  const msg = document.getElementById('reg-msg');
+  const btn = document.getElementById('reg-btn');
   if(!u||!p){msg.className='auth-msg err';msg.textContent='Remplissez tous les champs.';return;}
-  if(p.length<6){msg.className='auth-msg err';msg.textContent='Mot de passe trop court (min 6).';return;}
+  if(p.length<6){msg.className='auth-msg err';msg.textContent='Mot de passe trop court (min 6 caractères).';return;}
   btn.disabled=true; msg.className='auth-msg'; msg.textContent='Création du compte...';
-  try{ await fbAuth.createUserWithEmailAndPassword(u,p); }
-  catch(e){
-    btn.disabled=false; msg.className='auth-msg err';
-    const codes={'auth/email-already-in-use':'Cet email est déjà utilisé.','auth/invalid-email':'Email invalide.'};
-    msg.textContent=codes[e.code]||('Erreur : '+e.message);
+  try{
+    await fbAuth.createUserWithEmailAndPassword(u, p);
+  }catch(e){
+    btn.disabled=false;
+    msg.className='auth-msg err';
+    const codes = {
+      'auth/email-already-in-use':'Cet email est déjà utilisé.',
+      'auth/invalid-email':'Email invalide.',
+      'auth/weak-password':'Mot de passe trop faible (min 6 caractères).'
+    };
+    msg.textContent = codes[e.code] || ('Erreur : '+e.message);
+  }
+}
+async function authForgotPassword(){
+  const u = document.getElementById('login-user').value.trim().toLowerCase();
+  const msg = document.getElementById('login-msg');
+  if(!u){msg.className='auth-msg err';msg.textContent='Entrez votre email d\'abord.';return;}
+  msg.className='auth-msg'; msg.textContent='Envoi...';
+  try{
+    await fbAuth.sendPasswordResetEmail(u);
+    msg.className='auth-msg ok'; msg.textContent='Email de réinitialisation envoyé ✓';
+  }catch(e){
+    msg.className='auth-msg err';
+    const codes={'auth/user-not-found':'Email inconnu.','auth/invalid-email':'Email invalide.'};
+    msg.textContent = codes[e.code]||('Erreur : '+e.message);
   }
 }
 async function logout(){
   if(!confirm('Se déconnecter ?')) return;
-  await fbAuth.signOut();['login-user','login-pass','reg-user','reg-pass'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
-  document.getElementById('login-msg').textContent=''; document.getElementById('reg-msg').textContent='';
+  await fbAuth.signOut();
+  ['login-user','login-pass','reg-user','reg-pass'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.value='';
+  });
+  document.getElementById('login-msg').textContent='';
+  document.getElementById('reg-msg').textContent='';
 }
 async function showApp(){
-  await load();
   document.getElementById('app-wrapper').style.display='block';
-  initTheme(); renderHome();
-  const titleEl=document.querySelector('.topbar-title'); if(titleEl&&currentUser) titleEl.textContent=currentUser.email.split('@')[0];
+  initTheme();
+  renderHome();
+  const titleEl = document.querySelector('.topbar-title');
+  if(titleEl && currentUser) titleEl.textContent = currentUser.email.split('@')[0];
 }
+
 function initTheme(){
-  const saved=localStorage.getItem('res9_theme'); const isDark=saved==='dark'||(!saved&&window.matchMedia('(prefers-color-scheme: dark)').matches);
-  if(isDark){document.body.classList.add('dark-mode');document.getElementById('icon-moon').style.display='none';document.getElementById('icon-sun').style.display='block';}
+  const saved=localStorage.getItem('res9_theme');
+  const isDark=saved==='dark'||(!saved&&window.matchMedia('(prefers-color-scheme: dark)').matches);
+  if(isDark){
+    document.body.classList.add('dark-mode');
+    document.getElementById('icon-moon').style.display='none';
+    document.getElementById('icon-sun').style.display='block';
+  }
 }
 function toggleDark(){
   const isDark=document.body.classList.toggle('dark-mode');
@@ -1078,29 +1389,43 @@ function toggleDark(){
   document.getElementById('icon-moon').style.display=isDark?'none':'block';
   document.getElementById('icon-sun').style.display=isDark?'block':'none';
 }
-async function trackAndFetchUsers(){
-  const el=document.getElementById('u-count'); if(currentUsersCount!==null){if(el)el.innerText=currentUsersCount.toLocaleString('fr-FR');return;}
-  try{
-    const counted=localStorage.getItem('res9_counted_v2'); 
-    const url='https://api.counterapi.dev/v1/residanat2026_app_v2/users'+(counted?'/':'/up');
-    const res=await fetch(url); const data=await res.json();
-    if(data&&typeof data.count==='number'){currentUsersCount=data.count;if(!counted)localStorage.setItem('res9_counted_v2','true');if(el)el.innerText=currentUsersCount.toLocaleString('fr-FR');}
-  }catch(e){if(el)el.innerText='---';}
+
+async function trackAndFetchUsers() {
+  const el = document.getElementById('u-count');
+  if (currentUsersCount !== null) {
+    if (el) el.innerText = currentUsersCount.toLocaleString('fr-FR');
+    return;
+  }
+  try {
+    const counted = localStorage.getItem('res9_counted');
+    const url = 'https://api.counterapi.dev/v1/residanat2026_app/users' + (counted ? '/' : '/up');
+    const res = await fetch(url);
+    const data = await res.json();
+    if (data && typeof data.count === 'number') {
+      currentUsersCount = data.count;
+      if (!counted) localStorage.setItem('res9_counted', 'true');
+      if (el) el.innerText = currentUsersCount.toLocaleString('fr-FR');
+    } else {
+      if (el) el.innerText = "---";
+    }
+  } catch(e) {
+    if (el) el.innerText = "---";
+  }
 }
 
 function showPage(id,btn){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.bnav').forEach(b=>b.classList.remove('active'));
   document.getElementById('page-'+id).classList.add('active');
-  if(btn) btn.classList.add('active');
+  btn.classList.add('active');
   if(id==='stats') renderStats();
-  if(id==='classement') renderClassement();
   if(id==='search'){renderSearch();setTimeout(()=>document.getElementById('search-inp').focus(),80);}
 }
 function setView(v,el){
   viewMode=v;
   document.querySelectorAll('.vtab').forEach(t=>t.classList.remove('active'));
-  el.classList.add('active'); renderModArea();
+  el.classList.add('active');
+  renderModArea();
 }
 
 function renderProfile(){
@@ -1108,25 +1433,24 @@ function renderProfile(){
   const mDone=DATA.filter(m=>{const{dc,all}=modStats(m);return dc===all.length&&all.length>0;}).length;
   const clr=pct===100?'var(--green)':'var(--accent)';
   document.getElementById('home-profile').innerHTML=`
-    <div class="profile-banner"><img class="profile-banner-img" src="D.jpg" alt=""><div class="profile-banner-overlay"></div></div>
-    <div class="profile-inner">
-      <div class="profile-avatar-wrap">
-        <div class="profile-avatar" onclick="triggerPhotoUpload()" style="cursor:pointer" title="Changer la photo">
-          ${ring(pct,34,3,clr,80)}
-          <div class="profile-avatar-inner">${getUserPhoto()?`<img src="${getUserPhoto()}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`:currentUser?currentUser.email[0].toUpperCase():"R"}</div>
-        </div>
-        <div class="profile-stats">
-          <div class="pstat"><span class="pstat-v">${done}</span><span class="pstat-l">faits</span></div>
-          <div class="pstat"><span class="pstat-v">${tot}</span><span class="pstat-l">total</span></div>
-          <div class="pstat"><span class="pstat-v">${mDone}</span><span class="pstat-l">modules</span></div>
+    <div class="profile-row">
+      <div class="profile-avatar" onclick="triggerPhotoUpload()" style="cursor:pointer" title="Changer la photo">
+        ${ring(pct,34,3,clr,80)}
+        <div class="profile-avatar-inner" style="overflow:hidden;">
+          ${getUserPhoto() ? `<img src="${getUserPhoto()}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">` : (currentUser?currentUser.email[0].toUpperCase():"R")}
         </div>
       </div>
-      <div class="profile-name">Residanat 2026</div>
-      <div class="profile-bio">Concours de Résidanat de Constantine</div>
-      <div class="pbar-track"><div class="pbar-fill" style="width:${pct}%;background:${clr}"></div></div>
-      <div class="pbar-label"><span>Progression générale</span><strong>${pct}%</strong></div>
-      <div class="online-counter"><div class="online-dot"></div><span id="u-count">Calcul...</span> utilisateurs engagés</div>
+      <div class="profile-stats">
+        <div class="pstat"><span class="pstat-v">${done}</span><span class="pstat-l">faits</span></div>
+        <div class="pstat"><span class="pstat-v">${tot}</span><span class="pstat-l">total</span></div>
+        <div class="pstat"><span class="pstat-v">${mDone}</span><span class="pstat-l">modules</span></div>
+      </div>
     </div>
+    <div class="profile-name">Residanat 2026</div>
+    <div class="profile-bio">Concours de Résidanat de Constantine</div>
+    <div class="pbar-track"><div class="pbar-fill" style="width:${pct}%;background:${clr}"></div></div>
+    <div class="pbar-label"><span>Progression générale</span><strong>${pct}%</strong></div>
+    <div class="online-counter"><div class="online-dot"></div><span id="u-count">Calcul...</span> utilisateurs engagés</div>
   `;
   trackAndFetchUsers();
 }
@@ -1134,7 +1458,8 @@ function renderProfile(){
 function renderModGrid(){
   let h='';
   DATA.forEach(m=>{
-    const{pct,done}=modStats(m); const clr=done?'var(--green)':'var(--accent)';
+    const{dc,all,pct,done}=modStats(m);
+    const clr=done?'var(--green)':'var(--accent)';
     h+=`<div class="mgcell" onclick="openSheet('${m.id}')">
       <div class="mgcell-ring">${ring(pct,20,2.5,clr,52)}<div class="mgcell-inner">${abbr(m.name)}</div></div>
       <div class="mgcell-name">${m.name}</div>
@@ -1146,11 +1471,15 @@ function renderModGrid(){
 function renderModList(){
   let h='';
   DATA.forEach(m=>{
-    const{dc,all,pct,done}=modStats(m); const clr=done?'var(--green)':'var(--accent)';
+    const{dc,all,pct,done}=modStats(m);
+    const clr=done?'var(--green)':'var(--accent)';
     h+=`<div class="mrow" onclick="openSheet('${m.id}')">
       <div class="mrow-av">${ring(pct,17,2.5,clr,40)}<div class="mrow-av-inner">${abbr(m.name)}</div></div>
       <div class="mrow-info"><div class="mrow-name">${m.name}</div><div class="mrow-sub">${dc} / ${all.length} terminés</div></div>
-      <div class="mrow-right"><div class="mrow-pct${done?' done':''}">${pct}%</div><svg class="mrow-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></div>
+      <div class="mrow-right">
+        <div class="mrow-pct${done?' done':''}">${pct}%</div>
+        <svg class="mrow-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
     </div>`;
   });
   return `<div>${h}</div>`;
@@ -1160,17 +1489,20 @@ function renderHome(){renderProfile();renderModArea();}
 
 function openSheet(mid){
   sheetMid=mid;sheetFilt='all';
-  document.querySelectorAll('#sheet .spill').forEach((t,i)=>t.classList.toggle('active',i===0));
+  document.querySelectorAll('.spill').forEach((t,i)=>t.classList.toggle('active',i===0));
   renderSheetHdr();renderSheetBody();
-  document.getElementById('overlay').classList.add('show'); document.getElementById('sheet').classList.add('open');
+  document.getElementById('overlay').classList.add('show');
+  document.getElementById('sheet').classList.add('open');
   document.body.style.overflow='hidden';
 }
 function closeSheet(){
-  document.getElementById('overlay').classList.remove('show'); document.getElementById('sheet').classList.remove('open');
+  document.getElementById('overlay').classList.remove('show');
+  document.getElementById('sheet').classList.remove('open');
   document.body.style.overflow='';sheetMid=null;
 }
 function setSheetF(f,el){
-  sheetFilt=f; document.querySelectorAll('#sheet .spill').forEach(t=>t.classList.remove('active'));
+  sheetFilt=f;
+  document.querySelectorAll('.spill').forEach(t=>t.classList.remove('active'));
   el.classList.add('active');renderSheetBody();
 }
 function renderSheetHdr(){
@@ -1180,7 +1512,8 @@ function renderSheetHdr(){
     <div class="sheet-hdr-info"><div class="sheet-hdr-name">${m.name}</div><div class="sheet-hdr-sub">${dc} / ${all.length} cours terminés</div></div>
     <button class="sheet-close" onclick="closeSheet()">×</button>`;
   document.getElementById('sheet-actions').innerHTML=`
-    <button class="sa-btn" onclick="selAll('${m.id}',true)">Tout cocher</button><button class="sa-btn" onclick="selAll('${m.id}',false)">Tout décocher</button>`;
+    <button class="sa-btn" onclick="selAll('${m.id}',true)">Tout cocher</button>
+    <button class="sa-btn" onclick="selAll('${m.id}',false)">Tout décocher</button>`;
 }
 function renderSheetBody(){
   const m=DATA.find(d=>d.id===sheetMid);if(!m) return;
@@ -1188,29 +1521,34 @@ function renderSheetBody(){
   if(m.sections){
     let gi=0;
     m.sections.forEach(sec=>{
-      const rows=sec.courses.map((c,li)=>{const i=gi+li,done=!!S[kC(m.id,i)];if(sheetFilt==='done'&&!done)return '';if(sheetFilt==='todo'&&done)return '';return courseRow(m,i,c);}).join('');
-      if(rows.replace(/\s/g,'')) h+=`<div class="section-header"><div class="sh-dot" style="background:var(--accent)"></div>${sec.lbl}</div>${rows}`;
+      const rows=sec.courses.map((c,li)=>{const i=gi+li,done=!!S[kC(m.id,i)];if(sheetFilt==='done'&&!done) return '';if(sheetFilt==='todo'&&done) return '';return courseRow(m,i,c);}).join('');
+      if(rows.replace(/\s/g,'')) h+=`<div class="sec-lbl">${sec.lbl}</div>${rows}`;
       gi+=sec.courses.length;
     });
   } else {
-    flat(m).forEach((c,i)=>{const done=!!S[kC(m.id,i)];if(sheetFilt==='done'&&!done)return;if(sheetFilt==='todo'&&done)return;h+=courseRow(m,i,c);});
+    flat(m).forEach((c,i)=>{const done=!!S[kC(m.id,i)];if(sheetFilt==='done'&&!done) return;if(sheetFilt==='todo'&&done) return;h+=courseRow(m,i,c);});
   }
   document.getElementById('sheet-body').innerHTML=h||`<div class="empty">Aucun cours ici.</div>`;
 }
 function courseRow(m,i,name){
-  const done=!!S[kC(m.id,i)]; const hasNote=!!(S[kN(m.id,i)]||'').trim(); const noteOpen=!!S[kX(m.id,i)];
+  const done=!!S[kC(m.id,i)];
+  const hasNote=!!(S[kN(m.id,i)]||'').trim();
+  const noteOpen=!!S[kX(m.id,i)];
   const noteVal=(S[kN(m.id,i)]||'').replace(/"/g,'&quot;').replace(/</g,'&lt;');
   let bdg=m.qcm.map(qt=>{
-    const n=S[kQ(m.id,i,qt)]||0,full=n===MAX; let dots='';for(let d=0;d<MAX;d++) dots+=`<span class="bdot${d<n?' on':''}"></span>`;
+    const n=S[kQ(m.id,i,qt)]||0,full=n===MAX;
+    let dots='';for(let d=0;d<MAX;d++) dots+=`<span class="bdot${d<n?' on':''}"></span>`;
     return `<span class="badge${full?' bfull':''}" onclick="togQ(event,'${m.id}',${i},'${qt}')"><span class="badge-lbl">${QT[qt]}</span><span class="bdots">${dots}</span></span>`;
   }).join('');
-  const rv=S[kR(m.id,i)]||0,rvF=rv===MAX_REV; let rvd='';for(let d=0;d<MAX_REV;d++) rvd+=`<span class="bdot${d<rv?' on':''}"></span>`;
+  const rv=S[kR(m.id,i)]||0,rvF=rv===MAX;
+  let rvd='';for(let d=0;d<MAX;d++) rvd+=`<span class="bdot${d<rv?' on':''}"></span>`;
   bdg+=`<span class="badge rev${rvF?' bfull':''}" onclick="togR(event,'${m.id}',${i})"><span class="badge-lbl">Révision</span><span class="bdots">${rvd}</span></span>`;
-  const ql=S[kQl(m.id,i)]||0; let stars='';for(let d=0;d<MAXQ;d++) stars+=`<span class="qstar${d<ql?' on':''}">★</span>`;
+  const ql=S[kQl(m.id,i)]||0;
+  let stars='';for(let d=0;d<MAXQ;d++) stars+=`<span class="qstar${d<ql?' on':''}">★</span>`;
   bdg+=`<span class="qbadge${ql===MAXQ?' qmax':''}" onclick="togQl(event,'${m.id}',${i})"><span class="qbadge-lbl">Qualité</span>${stars}</span>`;
-  const lv=S[kLv(m.id,i)]||0; const lvInfo=LVL_DATA[lv];
+  const lv=S[kLv(m.id,i)]||0;
+  const lvInfo=LVL_DATA[lv];
   bdg+=`<span class="lvl-pill ${lvInfo.cls}" onclick="togLv(event,'${m.id}',${i})"><span class="lvl-dot"></span><span class="lvl-lbl">${lv===0?'Niveau':lvInfo.lbl}</span></span>`;
-  
   return `<div class="crow${done?' cdone':''}${hasNote?' has-note':''}${noteOpen?' note-open':''}" id="crow_${m.id}_${i}">
     <div class="cbox" onclick="togC(event,'${m.id}',${i})"><svg class="cchk" width="10" height="8" viewBox="0 0 10 8" fill="none"><polyline points="1,4 3.5,6.5 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
     <div class="cinfo"><div class="cname" onclick="togC(event,'${m.id}',${i})">${name}</div><div class="cbadges">${bdg}</div></div>
@@ -1218,19 +1556,18 @@ function courseRow(m,i,name){
     <div class="crow-notes"><textarea class="notes-ta" placeholder="Note personnelle..." oninput="saveNote('${m.id}',${i},this.value)" onclick="event.stopPropagation()">${noteVal}</textarea></div>
   </div>`;
 }
-
-function togC(e,mid,i){ e.stopPropagation(); S[kC(mid,i)] = !S[kC(mid,i)]; afterToggle(mid); }
+function togC(e,mid,i){e.stopPropagation();S[kC(mid,i)]=!S[kC(mid,i)];afterToggle(mid);}
 function togQ(e,mid,i,qt){e.stopPropagation();const c=S[kQ(mid,i,qt)]||0;S[kQ(mid,i,qt)]=c>=MAX?0:c+1;save();patchRow(mid,i);}
-function togR(e,mid,i){e.stopPropagation();const c=S[kR(mid,i)]||0;S[kR(mid,i)]=c>=MAX_REV?0:c+1;save();patchRow(mid,i);}
+function togR(e,mid,i){e.stopPropagation();const c=S[kR(mid,i)]||0;S[kR(mid,i)]=c>=MAX?0:c+1;save();patchRow(mid,i);}
 function togQl(e,mid,i){e.stopPropagation();const c=S[kQl(mid,i)]||0;S[kQl(mid,i)]=c>=MAXQ?0:c+1;save();patchRow(mid,i);}
 function togLv(e,mid,i){e.stopPropagation();const c=S[kLv(mid,i)]||0;S[kLv(mid,i)]=c>=3?0:c+1;save();patchRow(mid,i);}
 function togNote(e,mid,i){e.stopPropagation();S[kX(mid,i)]=!S[kX(mid,i)];save();const el=document.getElementById(`crow_${mid}_${i}`);if(el){el.classList.toggle('note-open',!!S[kX(mid,i)]);const n=el.querySelector('.crow-notes');if(n)n.style.display=S[kX(mid,i)]?'block':'none';}}
 function saveNote(mid,i,val){S[kN(mid,i)]=val;save();const el=document.getElementById(`crow_${mid}_${i}`);if(el)el.classList.toggle('has-note',!!val.trim());}
 function selAll(mid,v){const m=DATA.find(d=>d.id===mid);flat(m).forEach((_,i)=>{S[kC(mid,i)]=v;});afterToggle(mid);}
-function patchRow(mid,i){ const el=document.getElementById(`crow_${mid}_${i}`); if(el){const m=DATA.find(d=>d.id===mid);const t=document.createElement('div');t.innerHTML=courseRow(m,i,flat(m)[i]);el.replaceWith(t.firstChild);} }
-function afterToggle(mid){ save(); if(sheetMid===mid){renderSheetHdr();renderSheetBody();} renderHome(); }
+function patchRow(mid,i){const el=document.getElementById(`crow_${mid}_${i}`);if(el){const m=DATA.find(d=>d.id===mid);const t=document.createElement('div');t.innerHTML=courseRow(m,i,flat(m)[i]);el.replaceWith(t.firstChild);}}
+function afterToggle(mid){save();if(sheetMid===mid){renderSheetHdr();renderSheetBody();}renderHome();}
 
-function setSF(f,el){searchFilt=f;document.querySelectorAll('#page-search .spill').forEach(p=>p.classList.remove('active'));el.classList.add('active');renderSearch();}
+function setSF(f,el){searchFilt=f;document.querySelectorAll('.sfpill').forEach(p=>p.classList.remove('active'));el.classList.add('active');renderSearch();}
 function renderSearch(){
   const q=searchQ.toLowerCase().trim();
   if(!q&&searchFilt==='all'){document.getElementById('search-res').innerHTML=`<div class="empty">Tapez pour rechercher.</div>`;return;}
@@ -1238,9 +1575,17 @@ function renderSearch(){
   DATA.forEach(m=>{
     const all=flat(m);
     const idxs=all.reduce((a,c,i)=>{
-      const done=!!S[kC(m.id,i)];const lv=S[kLv(m.id,i)]||0;const ql=S[kQl(m.id,i)]||0;
+      const done=!!S[kC(m.id,i)];
+      const lv=S[kLv(m.id,i)]||0;
+      const ql=S[kQl(m.id,i)]||0;
       const nm=!q||c.toLowerCase().includes(q)||m.name.toLowerCase().includes(q);
-      const fm=searchFilt==='all'||(searchFilt==='done'&&done)||(searchFilt==='todo'&&!done)||(searchFilt==='facile'&&lv===1)||(searchFilt==='moyen'&&lv===2)||(searchFilt==='difficile'&&lv===3)||(searchFilt==='hq'&&ql===MAXQ);
+      const fm=searchFilt==='all'
+        ||(searchFilt==='done'&&done)
+        ||(searchFilt==='todo'&&!done)
+        ||(searchFilt==='facile'&&lv===1)
+        ||(searchFilt==='moyen'&&lv===2)
+        ||(searchFilt==='difficile'&&lv===3)
+        ||(searchFilt==='hq'&&ql===MAXQ);
       if(nm&&fm) a.push(i);return a;
     },[]);
     if(!idxs.length) return;
@@ -1251,426 +1596,86 @@ function renderSearch(){
 }
 
 function renderStats(){
-  let tot=0,done=0,qTot=0,qDone=0,nCount=0,qlTot=0,qlDone=0,lvCounts=[0,0,0,0],rTot=0,rDone=0;
-
+  let tot=0,done=0,qTot=0,qDone=0,rTot=0,rDone=0,nCount=0,qlTot=0,qlDone=0,lvCounts=[0,0,0,0];
   DATA.forEach(m=>flat(m).forEach((_,i)=>{
     tot++;
-    if(S[kC(m.id,i)]) done++;
+    if(S[kC(m.id,i)])done++;
     if((S[kN(m.id,i)]||'').trim())nCount++;
     m.qcm.forEach(qt=>{qTot+=MAX;qDone+=S[kQ(m.id,i,qt)]||0;});
+    rTot+=MAX;rDone+=S[kR(m.id,i)]||0;
     qlTot+=MAXQ;qlDone+=S[kQl(m.id,i)]||0;
     lvCounts[S[kLv(m.id,i)]||0]++;
-    rTot+=MAX_REV;rDone+=S[kR(m.id,i)]||0;
   }));
-
   const cp=tot?Math.round(done/tot*100):0;
   const qp=qTot?Math.round(qDone/qTot*100):0;
+  const rp=rTot?Math.round(rDone/rTot*100):0;
   const np=tot?Math.round(nCount/tot*100):0;
   const qlp=qlTot?Math.round(qlDone/qlTot*100):0;
-  const rp=rTot?Math.round(rDone/rTot*100):0;
-
   const mDone=DATA.filter(m=>{const{dc,all}=modStats(m);return dc===all.length&&all.length>0;}).length;
   const clr=cp===100?'var(--green)':'var(--accent)';
-
   let rows='';
   DATA.forEach(m=>{
-    const all=flat(m);let dc=0,qd=0,qt2=0,qld=0,lvHard=0;
-    
+    const all=flat(m);let dc=0,qd=0,qt2=0,rd=0,qld=0,lvHard=0;
     all.forEach((_,i)=>{
-      if(S[kC(m.id,i)]) dc++;
+      if(S[kC(m.id,i)])dc++;
       m.qcm.forEach(qt=>{qt2+=MAX;qd+=S[kQ(m.id,i,qt)]||0;});
+      rd+=S[kR(m.id,i)]||0;
       qld+=S[kQl(m.id,i)]||0;
-      if((S[kLv(m.id,i)]||0)===3)lvHard++;
+      if((S[kLv(m.id,i)]||0)===3) lvHard++;
     });
-
     const mp=all.length?Math.round(dc/all.length*100):0;
     const qpp=qt2?Math.round(qd/qt2*100):0;
+    const qlpp=all.length?Math.round(qld/(all.length*MAXQ)*100):0;
     const rc=mp===100?'var(--green)':'var(--accent)';
-
     rows+=`<div class="smod-item" onclick="openSheet('${m.id}')">
       <div class="smod-av">${ring(mp,15,2.5,rc,40)}<div class="smod-av-inner">${abbr(m.name)}</div></div>
       <div class="smod-info"><div class="smod-name">${m.name}</div><div class="smod-bar"><div class="smod-bar-f${mp===100?' done':''}" style="width:${mp}%"></div></div></div>
-      <div class="smod-nums" style="gap:10px;">
+      <div class="smod-nums">
         <div class="smod-num"><div class="smod-num-v">${dc}/${all.length}</div><div class="smod-num-l">Cours</div></div>
         <div class="smod-num"><div class="smod-num-v blue">${qpp}%</div><div class="smod-num-l">QCM</div></div>
+        <div class="smod-num"><div class="smod-num-v" style="color:#f59e0b">${qlpp}%</div><div class="smod-num-l">Qualité</div></div>
         ${lvHard?`<div class="smod-num"><div class="smod-num-v" style="color:#dc2626">${lvHard}</div><div class="smod-num-l">Diff.</div></div>`:''}
       </div>
     </div>`;
   });
-
   document.getElementById('stats-pg').innerHTML=`
-    <div class="profile-banner"><img class="profile-banner-img" src="D.jpg" alt=""><div class="profile-banner-overlay"></div></div>
-    <div class="profile-inner">
-      <div class="profile-avatar-wrap">
-        <div class="profile-avatar" style="border-color:var(--bg); background:var(--bg); display:flex; align-items:center; justify-content:center; color:var(--accent);">
-          ${ring(cp,34,3,clr,80)}
-          <div class="profile-avatar-inner" style="display:flex; flex-direction:column; background:var(--bg);">
-            <span style="font-size:16px; font-weight:800; color:var(--text); line-height:1;">${cp}%</span>
-            <span style="font-size:8px; font-weight:700; color:var(--text2); margin-top:1px;">FAIT</span>
+    <div class="stats-profile header-bg">
+      <div class="stats-top">
+        <div class="stats-av">${ring(cp,28,3,clr,72)}<div class="stats-av-inner"><div class="stats-pct">${cp}%</div><div class="stats-pct-l">fait</div></div></div>
+        <div class="stats-meta">
+          <div class="stats-mname">Vue Globale</div>
+          <div class="stats-mnums">
+            <div class="smnum"><span class="smnum-v">${done}</span><span class="smnum-l">faits</span></div>
+            <div class="smnum"><span class="smnum-v">${tot}</span><span class="smnum-l">total</span></div>
+            <div class="smnum"><span class="smnum-v">${mDone}</span><span class="smnum-l">finis</span></div>
           </div>
         </div>
-        <div class="profile-stats">
-          <div class="pstat"><span class="pstat-v">${done}</span><span class="pstat-l">faits</span></div>
-          <div class="pstat"><span class="pstat-v">${tot}</span><span class="pstat-l">total</span></div>
-          <div class="pstat"><span class="pstat-v">${mDone}</span><span class="pstat-l">finis</span></div>
-        </div>
       </div>
-      <div class="profile-name">Statistiques</div>
-      <div class="profile-bio">Vue d'ensemble de votre préparation</div>
     </div>
-    
     <div class="stats-kpis">
       <div class="skpi"><div class="skpi-v">${done}<span class="sub"> / ${tot}</span></div><div class="skpi-l">Cours terminés</div><div class="skpi-bar"><div class="skpi-bar-f" style="width:${cp}%;background:var(--accent)"></div></div></div>
       <div class="skpi"><div class="skpi-v">${cp}%</div><div class="skpi-l">Avancement</div><div class="skpi-bar"><div class="skpi-bar-f" style="width:${cp}%;background:var(--accent)"></div></div></div>
-      
       <div class="skpi"><div class="skpi-v blue">${qp}%</div><div class="skpi-l">QCM complétés</div><div class="skpi-bar"><div class="skpi-bar-f" style="width:${qp}%;background:var(--accent)"></div></div></div>
+      <div class="skpi"><div class="skpi-v green">${rp}%</div><div class="skpi-l">Révisions faites</div><div class="skpi-bar"><div class="skpi-bar-f" style="width:${rp}%;background:var(--green)"></div></div></div>
       <div class="skpi"><div class="skpi-v" style="color:#f59e0b">${qlp}%</div><div class="skpi-l">Qualité d'étude</div><div class="skpi-bar"><div class="skpi-bar-f" style="width:${qlp}%;background:#f59e0b"></div></div></div>
-      
-      <div class="skpi"><div class="skpi-v green">${rp}%</div><div class="skpi-l">Révis. manuelles</div><div class="skpi-bar"><div class="skpi-bar-f" style="width:${rp}%;background:var(--green)"></div></div></div>
-      <div class="skpi"><div class="skpi-v green">${nCount}<span class="sub"> notés</span></div><div class="skpi-l">Cours avec notes</div><div class="skpi-bar"><div class="skpi-bar-f" style="width:${np}%;background:var(--green)"></div></div></div>
-      
-      <div class="skpi wide">
-        <div class="skpi-v" style="color:#dc2626">${lvCounts[3]}<span class="sub"> difficiles</span></div>
-        <div class="skpi-l">Difficulté — <span style="color:#ea580c">${lvCounts[2]}</span> moyens — <span style="color:#16a34a">${lvCounts[1]}</span> faciles</div>
+      <div class="skpi">
+        <div class="skpi-v" style="color:#dc2626">${lvCounts[3]}</div>
+        <div class="skpi-l">Cours difficiles — <span style="color:#ea580c">${lvCounts[2]}</span> moyens — <span style="color:#16a34a">${lvCounts[1]}</span> faciles</div>
         <div class="skpi-bar" style="height:4px;display:flex;gap:2px;background:none;overflow:visible">
           <div style="flex:${lvCounts[1]||0};background:#16a34a;border-radius:2px;min-width:${lvCounts[1]?2:0}px"></div>
           <div style="flex:${lvCounts[2]||0};background:#ea580c;border-radius:2px;min-width:${lvCounts[2]?2:0}px"></div>
           <div style="flex:${lvCounts[3]||0};background:#dc2626;border-radius:2px;min-width:${lvCounts[3]?2:0}px"></div>
         </div>
       </div>
+      <div class="skpi wide"><div class="skpi-v green">${nCount}<span class="sub"> notés</span></div><div class="skpi-l">Cours avec notes — ${np}% du total</div><div class="skpi-bar"><div class="skpi-bar-f" style="width:${np}%;background:var(--green)"></div></div></div>
     </div>
-    <div class="section-header"><div class="sh-dot" style="background:var(--text3)"></div>Par module</div>
-    ${rows}
-  `;
-}
-
-// ── CLASSEMENT ──────────────────────────────────────────────────────────────
-let rankTab = 'avancement';
-let rankCache = null;
-
-function computeStatsFromState(state){
-  let tot=0, done=0, qTot=0, qDone=0;
-  DATA.forEach(m => {
-    flat(m).forEach((_,i)=>{
-      tot++;
-      if(state[kC(m.id,i)]){
-        done++;
-        m.qcm.forEach(qt=>{ qTot+=MAX; qDone+=state[kQ(m.id,i,qt)]||0; });
-      }
-    });
-  });
-  return {
-    tot, done,
-    pct: tot ? Math.round(done/tot*100) : 0,
-    qPct: qTot ? Math.round(qDone/qTot*100) : 0
-  };
-}
-
-function computeModuleStatsFromState(state){
-  return DATA.map(m=>{
-    const all=flat(m); let dc=0;
-    all.forEach((_,i)=>{ if(state[kC(m.id,i)]) dc++; });
-    return { id:m.id, name:m.name, pct: all.length ? Math.round(dc/all.length*100) : 0 };
-  });
-}
-
-function anonymName(rank, isMe, displayName){
-  if(isMe) return displayName ? displayName : 'Vous';
-  return displayName || `Conc. ${rank}`;
-}
-
-async function saveDisplayName(name){
-  name = name.trim().slice(0, 20);
-  userDisplayName = name;
-  if(!currentUser) return;
-  try{
-    await fbDb.collection('progress_v2').doc(currentUser.uid).set(
-      { displayName: name, updatedAt: new Date().toISOString() },
-      { merge: true }
-    );
-    renderClassement();
-  } catch(e){ console.warn('saveDisplayName failed', e); }
-}
-
-function openRenameModal(){
-  const overlay = document.getElementById('rename-overlay');
-  const inp = document.getElementById('rename-inp');
-  inp.value = userDisplayName;
-  overlay.style.display = 'flex';
-  setTimeout(()=>inp.focus(),80);
-}
-function closeRenameModal(){
-  document.getElementById('rename-overlay').style.display = 'none';
-}
-function confirmRename(){
-  const val = document.getElementById('rename-inp').value;
-  closeRenameModal();
-  saveDisplayName(val);
-}
-
-async function renderClassement(){
-  const el = document.getElementById('classement-pg');
-  el.innerHTML = `<div class="rank-loading"><div class="rank-loading-spin"></div><div class="rank-loading-text">Chargement des données...</div></div>`;
-
-  let users =[];
-  try {
-    const snap = await fbDb.collection('progress_v2').get();
-    snap.forEach(doc => {
-      const data = doc.data();
-      const state = data.state || {};
-      const stats = computeStatsFromState(state);
-      if(stats.done === 0) return; 
-      users.push({ uid: doc.id, stats, state, displayName: data.displayName||'', updatedAt: data.updatedAt||'' });
-    });
-    rankCache = users;
-  } catch(e) {
-    el.innerHTML = `
-      <div style="padding:32px 20px 16px; text-align:center;">
-        <div class="rank-error-title">Accès refusé par Firestore</div>
-        <div class="rank-error-desc">Pour activer le classement, ajoutez cette règle dans la console Firebase > Firestore > Rules :</div>
-      </div>
-      <div class="rank-rule-box">
-        <pre>match /progress_v2/{uid} {
-  allow read: if request.auth != null;
-  allow write: if request.auth.uid == uid;
-}</pre>
-      </div>`;
-    return;
-  }
-
-  if(users.length < 2){
-    el.innerHTML = `<div class="empty">Aucun concurrent pour le moment.<br>Le classement s'activera dès que d'autres utilisateurs auront progressé.</div>`;
-    return;
-  }
-
-  renderRankContent(users);
-}
-
-function renderRankContent(users){
-  const el = document.getElementById('classement-pg');
-  const myUid = currentUser ? currentUser.uid : null;
-
-  function sortedBy(field){
-    return[...users].sort((a,b) => b.stats[field] - a.stats[field]);
-  }
-  const byPct  = sortedBy('pct');
-  const byQcm  = sortedBy('qPct');
-
-  const myRankPct = byPct.findIndex(u=>u.uid===myUid)+1;
-  const myStats   = users.find(u=>u.uid===myUid)?.stats || computeStatsFromState(S);
-  const avgPct    = Math.round(users.reduce((s,u)=>s+u.stats.pct,0)/users.length);
-  const avgQcm    = Math.round(users.reduce((s,u)=>s+u.stats.qPct,0)/users.length);
-
-  function podiumBar(user, rank, isMe){
-    const heights = {1:80,2:60,3:45};
-    const colors  = {1:'#f59e0b',2:'#a3a3a3',3:'#ea580c'};
-    const nums    = {1:'1er',2:'2e',3:'3e'};
-    const h = heights[rank], c = colors[rank];
-    return `<div class="podium-col">
-      <div class="podium-rank podium-rank-${rank}">${nums[rank]}</div>
-      <div class="podium-name" style="color:${isMe?'var(--accent)':'var(--text2)'}">${anonymName(rank,isMe,user.displayName)}</div>
-      <div class="podium-bar" style="height:${h}px;background:${c};">
-        <span class="podium-pct">${user.stats.pct}%</span>
-      </div>
-      <div style="width:100%;height:4px;background:var(--line2);border-radius:0 0 4px 4px;"></div>
-    </div>`;
-  }
-
-  const top3 = byPct.slice(0,3);
-  const podiumOrder = top3.length >= 3
-    ? [top3[1],top3[0],top3[2]]
-    : top3.length === 2 ?[null,top3[0],top3[1]]
-    :[null,top3[0],null];
-
-  let podiumHtml = `<div class="rank-podium" style="align-items:flex-end;padding:0 8px;">`;
-  podiumOrder.forEach((u,vi)=>{
-    const realRank = vi===1?1:vi===0?2:3;
-    if(u) podiumHtml += podiumBar(u, realRank, u.uid===myUid);
-    else podiumHtml += `<div class="podium-col"></div>`;
-  });
-  podiumHtml += `</div>`;
-
-  function tabHtml(){
-    return `<div class="rank-tabs">
-      <div class="rank-tab${rankTab==='avancement'?' active':''}" onclick="switchRankTab('avancement',this)">Avancement</div>
-      <div class="rank-tab${rankTab==='qcm'?' active':''}" onclick="switchRankTab('qcm',this)">QCM</div>
-      <div class="rank-tab${rankTab==='modules'?' active':''}" onclick="switchRankTab('modules',this)">Modules</div>
-    </div>`;
-  }
-
-  function rankList(sorted, field, unit='%'){
-    let h = '';
-    sorted.forEach((u,idx)=>{
-      const rank = idx+1;
-      const isMe = u.uid===myUid;
-      const val  = u.stats[field];
-      const numCls = rank===1?'top1':rank===2?'top2':rank===3?'top3':'';
-      const barColor = isMe ? 'var(--accent)' : rank===1?'#f59e0b':'var(--text3)';
-      h += `<div class="rank-row${isMe?' is-me':''}">
-        <div class="rank-num ${numCls}">${rank}</div>
-        <div class="rank-row-name${isMe?' is-me-lbl':''}">${anonymName(rank,isMe,u.displayName)}</div>
-        <div class="rank-row-bar-wrap">
-          <div class="rank-row-bar-track">
-            <div class="rank-row-bar-fill" style="width:${val}%;background:${barColor}"></div>
-          </div>
-        </div>
-        <div class="rank-row-val" style="color:${isMe?'var(--accent)':'var(--text2)'}">${val}${unit}</div>
-      </div>`;
-    });
-    return h;
-  }
-
-  function compareSection(){
-    const metrics =[
-      { label:'Avancement', mine:myStats.pct, avg:avgPct, color:'var(--accent)' },
-      { label:'QCM',        mine:myStats.qPct, avg:avgQcm, color:'var(--green)' }
-    ];
-    let h = `<div class="rank-compare-section">
-      <div class="rank-compare-title">Vous vs Moyenne</div>`;
-    metrics.forEach(m=>{
-      h += `<div style="margin-bottom:10px;">
-        <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
-          <span style="font-size:11px;font-weight:600;color:var(--text2);">${m.label}</span>
-          <span style="font-size:11px;color:var(--text3);">Moy. ${m.avg}%</span>
-        </div>
-        <div class="rank-compare-bar-row">
-          <div class="rank-compare-label" style="color:var(--accent);font-weight:600;">Vous</div>
-          <div class="rank-compare-track"><div class="rank-compare-fill" style="width:${m.mine}%;background:${m.color}"></div></div>
-          <div class="rank-compare-val" style="color:${m.color}">${m.mine}%</div>
-        </div>
-        <div class="rank-compare-bar-row">
-          <div class="rank-compare-label">Moyenne</div>
-          <div class="rank-compare-track"><div class="rank-compare-fill" style="width:${m.avg}%;background:var(--line)"></div></div>
-          <div class="rank-compare-val">${m.avg}%</div>
-        </div>
-      </div>`;
-    });
-    h += `</div>`;
-    return h;
-  }
-
-  function moduleSection(){
-    const myModStats = computeModuleStatsFromState(S);
-    const avgMod = DATA.map((m,mi)=>{
-      const avg2 = Math.round(users.reduce((s,u)=>s+computeModuleStatsFromState(u.state)[mi].pct,0)/users.length);
-      return avg2;
-    });
-    let h = `<div class="section-header" style="margin-top:0;"><div class="sh-dot" style="background:var(--text3)"></div>Par module — Vous vs Moyenne</div>`;
-    DATA.forEach((m,mi)=>{
-      const mine = myModStats[mi].pct;
-      const avg2 = avgMod[mi];
-      const ahead = mine >= avg2;
-      h += `<div class="rank-module-row">
-        <div class="rank-module-name">${m.name}</div>
-        <div class="rank-module-bars">
-          <div class="rank-module-bar-row">
-            <span style="font-size:9px;color:var(--accent);min-width:28px;font-weight:600;">Vous</span>
-            <div class="rank-module-bar-track"><div class="rank-module-bar-fill" style="width:${mine}%;background:${ahead?'var(--accent)':'var(--red,#dc2626)'}"></div></div>
-            <span class="rank-module-bar-label" style="color:var(--accent)">${mine}%</span>
-          </div>
-          <div class="rank-module-bar-row">
-            <span style="font-size:9px;color:var(--text3);min-width:28px;">Moy.</span>
-            <div class="rank-module-bar-track"><div class="rank-module-bar-fill" style="width:${avg2}%;background:var(--text3)"></div></div>
-            <span class="rank-module-bar-label" style="color:var(--text3)">${avg2}%</span>
-          </div>
-        </div>
-      </div>`;
-    });
-    return h;
-  }
-
-  let tabContent = '';
-  if(rankTab==='avancement') tabContent = rankList(byPct, 'pct');
-  else if(rankTab==='qcm')   tabContent = rankList(byQcm, 'qPct');
-  else if(rankTab==='modules') tabContent = compareSection() + moduleSection();
-
-  const myDisplayName = users.find(u=>u.uid===myUid)?.displayName || userDisplayName || '';
-  const myCard = myUid ? `
-    <div class="rank-my-card">
-      <div>
-        <div class="rank-my-pos">#${myRankPct}</div>
-        <div class="rank-my-pos-label">RANG</div>
-      </div>
-      <div class="rank-my-info">
-        <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
-          <div class="rank-my-name">${myDisplayName || 'Votre position'}</div>
-          <button onclick="openRenameModal()" title="Changer le pseudo" style="background:none;border:none;cursor:pointer;padding:2px 4px;color:var(--text3);font-size:12px;border-radius:6px;transition:background .12s;" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background='none'">
-            ✏️
-          </button>
-        </div>
-        <div class="rank-my-bar-track"><div class="rank-my-bar-fill" style="width:${myStats.pct}%"></div></div>
-        <div class="rank-my-metrics">
-          <div class="rank-my-metric">Avancement <strong>${myStats.pct}%</strong></div>
-          <div class="rank-my-metric">QCM <strong>${myStats.qPct}%</strong></div>
-        </div>
-      </div>
-    </div>` : '';
-
-  el.innerHTML = `
-    <div class="rank-header">
-      ${myCard}
-      ${podiumHtml}
-    </div>
-    ${tabHtml()}
-    <div id="rank-tab-content">${tabContent}</div>
-    <div class="rank-updated">${users.length} utilisateurs actifs — données en temps réel</div>
-  `;
-}
-
-function switchRankTab(tab, el){
-  rankTab = tab;
-  document.querySelectorAll('.rank-tab').forEach(t=>t.classList.remove('active'));
-  el.classList.add('active');
-  if(!rankCache){ renderClassement(); return; }
-  const content = document.getElementById('rank-tab-content');
-  if(!content) return;
-  const myUid = currentUser ? currentUser.uid : null;
-  const myStats = rankCache.find(u=>u.uid===myUid)?.stats || computeStatsFromState(S);
-  const avgPct = Math.round(rankCache.reduce((s,u)=>s+u.stats.pct,0)/rankCache.length);
-  const avgQcm = Math.round(rankCache.reduce((s,u)=>s+u.stats.qPct,0)/rankCache.length);
-
-  function sortedBy(field){ return [...rankCache].sort((a,b)=>b.stats[field]-a.stats[field]); }
-  function rankList(sorted, field){
-    let h='';
-    sorted.forEach((u,idx)=>{
-      const rank=idx+1,isMe=u.uid===myUid,val=u.stats[field];
-      const numCls=rank===1?'top1':rank===2?'top2':rank===3?'top3':'';
-      const barColor=isMe?'var(--accent)':rank===1?'#f59e0b':'var(--text3)';
-      h+=`<div class="rank-row${isMe?' is-me':''}">
-        <div class="rank-num ${numCls}">${rank}</div>
-        <div class="rank-row-name${isMe?' is-me-lbl':''}">${anonymName(rank,isMe,u.displayName)}</div>
-        <div class="rank-row-bar-wrap"><div class="rank-row-bar-track"><div class="rank-row-bar-fill" style="width:${val}%;background:${barColor}"></div></div></div>
-        <div class="rank-row-val" style="color:${isMe?'var(--accent)':'var(--text2)'}">${val}%</div>
-      </div>`;
-    });
-    return h;
-  }
-
-  if(tab==='avancement') content.innerHTML = rankList(sortedBy('pct'),'pct');
-  else if(tab==='qcm')   content.innerHTML = rankList(sortedBy('qPct'),'qPct');
-  else if(tab==='modules'){
-    const myModStats = computeModuleStatsFromState(S);
-    const avgMod = DATA.map((m,mi)=>Math.round(rankCache.reduce((s,u)=>s+computeModuleStatsFromState(u.state)[mi].pct,0)/rankCache.length));
-    let cmpHtml = `<div class="rank-compare-section"><div class="rank-compare-title">Vous vs Moyenne</div>`;[{label:'Avancement',mine:myStats.pct,avg:avgPct,color:'var(--accent)'},{label:'QCM',mine:myStats.qPct,avg:avgQcm,color:'var(--green)'}].forEach(m=>{
-      cmpHtml+=`<div style="margin-bottom:10px;"><div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="font-size:11px;font-weight:600;color:var(--text2);">${m.label}</span><span style="font-size:11px;color:var(--text3);">Moy. ${m.avg}%</span></div>
-      <div class="rank-compare-bar-row"><div class="rank-compare-label" style="color:var(--accent);font-weight:600;">Vous</div><div class="rank-compare-track"><div class="rank-compare-fill" style="width:${m.mine}%;background:${m.color}"></div></div><div class="rank-compare-val" style="color:${m.color}">${m.mine}%</div></div>
-      <div class="rank-compare-bar-row"><div class="rank-compare-label">Moyenne</div><div class="rank-compare-track"><div class="rank-compare-fill" style="width:${m.avg}%;background:var(--line)"></div></div><div class="rank-compare-val">${m.avg}%</div></div></div>`;
-    });
-    cmpHtml+=`</div><div class="section-header" style="margin-top:0;"><div class="sh-dot" style="background:var(--text3)"></div>Par module — Vous vs Moyenne</div>`;
-    DATA.forEach((m,mi)=>{
-      const mine=myModStats[mi].pct, avg2=avgMod[mi], ahead=mine>=avg2;
-      cmpHtml+=`<div class="rank-module-row"><div class="rank-module-name">${m.name}</div><div class="rank-module-bars">
-        <div class="rank-module-bar-row"><span style="font-size:9px;color:var(--accent);min-width:28px;font-weight:600;">Vous</span><div class="rank-module-bar-track"><div class="rank-module-bar-fill" style="width:${mine}%;background:${ahead?'var(--accent)':'#dc2626'}"></div></div><span class="rank-module-bar-label" style="color:var(--accent)">${mine}%</span></div>
-        <div class="rank-module-bar-row"><span style="font-size:9px;color:var(--text3);min-width:28px;">Moy.</span><div class="rank-module-bar-track"><div class="rank-module-bar-fill" style="width:${avg2}%;background:var(--text3)"></div></div><span class="rank-module-bar-label" style="color:var(--text3)">${avg2}%</span></div>
-      </div></div>`;
-    });
-    content.innerHTML = cmpHtml;
-  }
+    <div class="stats-sec-lbl">Par module</div>
+    ${rows}`;
 }
 
 function confirmReset(){if(confirm('Réinitialiser toute la progression ?')){
   S={};
-  if(currentUser) fbDb.collection('progress_v2').doc(currentUser.uid).set({state:{},updatedAt:new Date().toISOString()});
+  if(currentUser) fbDb.collection('progress').doc(currentUser.uid).set({state:{},updatedAt:new Date().toISOString()});
   renderHome();
 }}
 
@@ -1679,6 +1684,7 @@ document.getElementById('sheet-drag').addEventListener('touchstart',e=>{ty0=e.to
 document.getElementById('sheet-drag').addEventListener('touchend',e=>{if(e.changedTouches[0].clientY-ty0>55)closeSheet();},{passive:true});
 document.getElementById('search-inp').addEventListener('input',function(){searchQ=this.value;renderSearch();});
 
+// ══ FIREBASE INIT ══
 const firebaseConfig = {
   apiKey: "AIzaSyBEyuDMi0zyjiuyCzLCV7vDe7W_NZkKKdo",
   authDomain: "todo-ae29f.firebaseapp.com",
@@ -1688,24 +1694,94 @@ const firebaseConfig = {
   appId: "1:372927152021:web:075c632b6ae48c284dc09c"
 };
 firebase.initializeApp(firebaseConfig);
-fbAuth    = firebase.auth();
-fbDb      = firebase.firestore();
-fbStorage = firebase.storage();
+fbAuth = firebase.auth();
+fbDb  = firebase.firestore();
+fbDb.enablePersistence({ synchronizeTabs: true }).catch(e => {
+  if (e.code === 'failed-precondition') console.warn('Persistence: multi-tab, désactivé.');
+  else if (e.code === 'unimplemented') console.warn('Persistence: navigateur non supporté.');
+});
 
 fbAuth.onAuthStateChanged(async user => {
-  document.getElementById('loading-screen').style.display='none';
+  document.getElementById('loading-screen').style.display = 'none';
   if(user){
-    currentUser=user;
+    currentUser = user;
     await load();
-    loadUserPhoto();
     document.getElementById('auth-screen').classList.remove('show');
     showApp();
   } else {
-    currentUser=null; S={}; userPhotoURL='';
-    document.getElementById('app-wrapper').style.display='none';
+    currentUser = null;
+    S = {};
+    document.getElementById('app-wrapper').style.display = 'none';
     showAuthScreen();
   }
 });
+
+// ══════════════════════════════════════
+//  PWA INSTALL BANNER
+// ══════════════════════════════════════
+let deferredPrompt = null;
+const DISMISS_KEY = 'res9_install_dismissed';
+
+function isInstallDismissed() {
+  const ts = localStorage.getItem(DISMISS_KEY);
+  if (!ts) return false;
+  return (Date.now() - parseInt(ts)) < 7 * 24 * 3600 * 1000;
+}
+
+function isIos() {
+  return /iphone|ipad|ipod/i.test(navigator.userAgent);
+}
+
+function isInStandaloneMode() {
+  return window.matchMedia('(display-mode: standalone)').matches
+    || window.navigator.standalone === true;
+}
+
+// Capture Chrome/Android native prompt
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+});
+
+window.addEventListener('appinstalled', () => {
+  deferredPrompt = null;
+  dismissInstall();
+});
+
+function triggerInstall() {
+  if (deferredPrompt) {
+    // Chrome/Android: native prompt
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(r => {
+      deferredPrompt = null;
+      dismissInstall();
+    });
+  } else {
+    // No native prompt: hide Android banner, show iOS steps
+    document.getElementById('install-banner').classList.remove('show');
+    document.getElementById('ios-banner').classList.add('show');
+  }
+}
+
+function dismissInstall() {
+  document.getElementById('install-banner').classList.remove('show');
+  localStorage.setItem(DISMISS_KEY, Date.now().toString());
+}
+function dismissIos() {
+  document.getElementById('ios-banner').classList.remove('show');
+  localStorage.setItem(DISMISS_KEY, Date.now().toString());
+}
+
+// ── Show banner after 1.5s unless already installed or dismissed ──
+setTimeout(() => {
+  if (isInStandaloneMode() || isInstallDismissed()) return;
+  if (isIos()) {
+    document.getElementById('ios-banner').classList.add('show');
+  } else {
+    document.getElementById('install-banner').classList.add('show');
+  }
+}, 1500);
 </script>
+</div><!-- /app-wrapper -->
 </body>
 </html>
